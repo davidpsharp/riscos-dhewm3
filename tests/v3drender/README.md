@@ -12,3 +12,10 @@ To build: clone V3DRender into `build/v3drender/src`, apply a patch, then
 in the doom3-riscos image; it expects the source at /work/build/v3drender/src).
 Gives `build/v3drender/src/out/V3DRender,ffa`. Load it in place of !RISC3D's until a reboot:
 `RMKill RISC3D`, `RMKill V3DRender`, `RMLoad <test module>`, `RMLoad <RISC3D$Dir>.RISC3D`.
+
+## The playable build (22 Nov 2026)
+`playable.patch` (against 21cbdb7): 16384 handles and BOs, never claim specific pages
+(`high_run` returns DA_RELEASE), and logging of refused BOs; 0.16's placement is unchanged.
+It must be loaded **after DAClamp** so its 256 MB area isn't capped at 128 MB: on plato,
+`Obey $.code.UseTestV3D` (`UseTestV3D,feb` here) does that until the next reboot. See
+`docs/risc3d-issues.md` items 2, 7, 8, 10 and 11.

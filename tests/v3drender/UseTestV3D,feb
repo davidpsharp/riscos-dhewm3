@@ -1,0 +1,8 @@
+| riscos-doom3 test: swap !RISC3D's V3DRender 0.16 for the patched test build (16k handles,
+| no specific-page claims), after lifting RISC OS 5's 128 MB dynamic area cap (DAClamp), which
+| V3DRender's 256 MB buffer area needs. Lasts until the next reboot.
+RMKill RISC3D
+RMKill V3DRender
+/SDFS::RISCOSpi.$.code.!dhewm3.DAClamp
+RMLoad <Obey$Dir>.V3DTest
+RMLoad <RISC3D$Dir>.RISC3D

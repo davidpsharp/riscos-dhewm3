@@ -59,7 +59,7 @@ Outputs kept in `build/d3gltest/*.out`.
   - RecommendPage (Kernel `s/MemInfo`) has handled bit 9 since df4efb6 (Jeffrey Lee, 2019; first
     in Kernel-6_56). It is byte-for-byte the same in 5.30 (Kernel-6_70-1/-2). The source was
     read from a local mirror (riscos311-re's), as ROOL's GitLab was offline.
-- **The cause: 0.13's top-down placement of aligned BOs** (tested 22 Nov 2026 on plato, by
+- **First reading (superseded by the update below): 0.13's top-down placement of aligned BOs** (tested 22 Nov 2026 on plato, by
   swapping in test builds of 0.16 with `RMKill RISC3D`, `RMKill V3DRender`, `RMLoad test`,
   `RMLoad RISC3D`):
   - *nohigh* (`high_run` always returns DA_RELEASE, as 0.11): the same failure (22 of 23 checks
@@ -71,6 +71,21 @@ Outputs kept in `build/d3gltest/*.out`.
     claim or map: either `OS_DynamicArea 21/22` at high PMP page indexes on 5.30, or V3DRender's
     page table or MMU entries for those GPU addresses. (A BASIC probe of the PMP calls couldn't
     create a PMP without a handler, so the kernel side isn't isolated yet.)
+- **Update, later on 22 Nov 2026: the real cause is RISC OS 5.30's 128 MB cap on a dynamic
+  area's size**, not top-down placement as such. V3DRender's buffer area is a PMP of
+  `V3DRender$Size` (256 MB), but 5.30 caps a dynamic area at 128 MB unless something lifts it
+  (the `DAClamp` utility, `OS_DynamicArea 8`). Top-down placement puts the first 64 KB+ BOs in
+  the area's top half, past 128 MB, where every claim fails ("claim any failed: OS error &1D1",
+  at area page &7FF3, which is the 128 MB line). Bottom-up placement only hid it until the area
+  filled to 128 MB (then a level load failed the same way, and Mesa crashed, below).
+  - Tested: **unmodified 0.16** from !RISC3D, loaded after DAClamp: d3gltest passes 13 of 17
+    (the 4 are item 6) with 0 MMU errors at 99 fps. Without DAClamp first: 22 of 23 fail.
+  - Tested: run DAClamp, *then* load V3DRender (so its area is made under the lifted cap), with
+    0.16's own top-down placement restored: dhewm3 plays Mars City 1 with **137 MB** of BOs in
+    use, 0 resets, 0 MMU errors.
+  - Suggestion: create the area at a size the OS allows (read the cap, or lift it with
+    `OS_DynamicArea 8` as DAClamp does), and say so in `*V3DRender` when the area is smaller
+    than `V3DRender$Size`. Until then, a game can't fix this itself: the area exists from boot.
 - **With bottomup, dhewm3 reaches its main menu on the Pi 4's GPU**, but loading
   demo_mars_city1 at Ultra quality gets 292 "Failed to allocate device memory for BO". Mesa then
   crashes in `mgpu_v3d_bo_map`, reading through freed memory (r6 = &FDFDFDFD, `ldr r0,[r6,#&754]`).
@@ -164,12 +179,60 @@ Outputs kept in `build/d3gltest/*.out`.
   logs every CREATE_BO failure in `*V3DRender`): no more failures; the level loads.
 - **Suggestion:** raise both, or grow the tables, and put a CREATE_BO failure in the log.
 
-### 8. V3DRender/Mesa v3d: GPU hangs while dhewm3 loads a level; afterwards nothing reaches the window
-- **Seen:** the same run as item 7, after the 16k fix. Two render jobs hang
-  (`V3D_ERR_STAT &00001000`; V3DRender resets the GPU each time). The game then plays (about 60
-  render jobs a second, the mouse captured) but the window keeps showing the loading screen.
-- **Evidence:** `tests/v3drender/logs/2026-11-22-mars-city1-medium-16k.txt` (`*V3DRender`, with
-  the first and last hang's registers), and the game's stdout beside it.
-- Not yet known whether the window's imported memory is lost at the reset, or whether frames
-  after it go elsewhere. `*V3DDump` of the hang would show the control list.
+### 8. V3DRender: claiming specific physical pages moves imported memory under the GPU (the hangs and the frozen window)
+- **Seen:** pi4-plato, dhewm3 loading demo_mars_city1: two render jobs hang (V3DRender resets
+  the GPU), then the game plays but the window keeps showing the loading screen.
+- **The evidence:** the first hang's `*V3DDump`
+  (`tests/v3drender/logs/2026-11-22-hang1-decoded.txt`): the render list was stuck in its
+  generic tile list at &057286E4, and that memory held `00 00 00 ff` over and over: opaque
+  black, the frame's clear colour. **The GPU had stored a tile of pixels over its own control
+  list**, so two GPU buffers shared physical pages.
+- **Cause (confirmed by the fix):** `plat_pages_claim` asks OS_Memory 12 for a run of pages
+  and claims those *specific* pages (OS_DynamicArea 21 with a page number). RecommendPage only
+  skips Unavailable/Required/Reserved pages, so it can name a page another dynamic area owns,
+  and the kernel then **moves that area's contents** to another page to hand it over. The
+  window surface is the program's own memory, imported (`DRM_IOCTL_RISCOS_IMPORT_MEMORY`) with
+  its physical addresses read once (`b->pa`). When its pages move, the GPU keeps rendering the
+  window into the old pages, which now belong to V3DRender's own BOs (here a control list).
+  The window stops updating and the corrupted lists hang the GPU.
+- **Tested fix:** never claim specific pages (`high_run` returns DA_RELEASE, so every page is
+  "any page" from the free pool). With that, 16k handles (item 7), and the area made after DAClamp (item 2)
+  (`tests/v3drender/playable.patch`; load it with `tests/v3drender/UseTestV3D`):
+  **dhewm3 plays Mars City 1 on the Pi 4** (intro ~20 fps, in play ~9 fps at 800x600, Medium),
+  0 resets, 0 MMU errors. The pages still come from above 1 GB (`*V3DRender` shows all of them
+  there), so 0.12's goal may still hold.
+- **Suggestions:** claim only free-pool pages (or check a recommended page is free first);
+  and make imported memory stay put while the GPU holds it (lock its pages, e.g. the PMP-style
+  "page unavailable" flags, as Linux pins userptr pages).
 
+### 9. (Solved: see item 8.) GPU hangs while dhewm3 loads a level, then a frozen window
+- The first report of item 8's symptoms; the register logs are in
+  `tests/v3drender/logs/2026-11-22-mars-city1-medium-16k.txt`.
+
+### 10. Performance on the Pi 4: dhewm3 in play at ~9 fps, about 8 GPU render jobs a frame
+- **Seen:** pi4-plato, test V3DRender (item 8), dhewm3 Mars City 1 in play, 800x600, Medium
+  quality. `com_speeds`: ~111 ms a frame, of which ~84 ms is the back end (GL calls and waits),
+  ~10 ms game, ~13 ms front end. Intro cinematic ~16-20 fps, menus ~44 fps. Full screen is no
+  faster; turning off shadows changes nothing; skipping lighting interactions saves ~25 ms.
+- **The GPU isn't full:** over 10 s of play `*V3DRender` counted 742 render jobs (bin 405 ms,
+  render 4,055 ms of GPU time), so it was busy under half the time, but each frame is split into
+  about **8 render jobs**, each loading and storing the whole 800x600 tile buffer.
+- **Why the jobs are split** (`V3DM$Why`, one run): 1,308 "pipe flush (glFlush, glFinish, a
+  swap, a read-back)", all from one caller; 462 "directly"; 53 "reading a resource a job
+  writes" (dhewm3 copies the frame into textures for its post-process and GUI effects, with
+  `glCopyTexSubImage2D`).
+- **And BO churn:** `V3DM$Stats` showed ~2,200 `CREATE_BO` (~840 MB) and ~7,800 `WAIT_BO`
+  (~2.3 s waiting) per 5 s: Mesa makes and frees buffers (probably streaming vertex/index
+  uploads) far faster than on Linux, and much of the frame is spent waiting on BOs.
+- **Questions for Andy:** where the pipe flushes come from (the caller offset is in the
+  `V3DM$Why` output); whether the BO cache (Mesa's `v3d_bo_cache`) is active on RISC OS; and
+  whether a frame copy could stay on the GPU without ending the job.
+
+### 11. Mesa v3d: a refused BO allocation crashes the program
+- Whenever `CREATE_BO` fails (the full area of item 2), riscos-mesa goes on to use the missing
+  buffer: once a data abort in `mgpu_v3d_bo_map` reading freed memory (r6 = &FDFDFDFD), once
+  `memcpy` to address 0 (dhewm3 on plato, 22 Nov 2026, 14:07: "data abort accessing &00000000",
+  in `bcopy` called from libMesaGPU). Linux's Mesa has the same checks missing, but there the
+  kernel rarely refuses. A GL_OUT_OF_MEMORY would let the game say so instead.
+- Also seen once: d3gltest ended with "Fatal signal received: EMT trap" while exiting, on stock
+  0.16 loaded after DAClamp (all checks had already run).

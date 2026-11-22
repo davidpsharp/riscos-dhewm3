@@ -1,0 +1,806 @@
+Hung: render job
+Render list 05729000-057291ED, bin list 05675000-05675108
+Tile alloc (qma) 0221F000, 73728 bytes (qms); tile state (qts) 012F8000
+CT0: CS 00000000 CA 05675108 EA 05675108 RA 00000000
+CT1: CS 00000118 CA 057286EF EA 057291ED RA 0572915C
+PCS 00000004 BFC 166 RFC 165 ERR_STAT 00001000
+FDBGO 00000000 FDBGB 00000000 FDBGR 00000000 FDBGS 00000047
+Binner memory: BPCA 02226000 BPCS 0000B000 BPOA 00000000 BPOS 00000000
+
+BOs (15):
+  05675000    4096 bytes
+  01BB1000    8192 bytes
+  01301000    8192 bytes
+  00201000    8192 bytes
+  05728000    4096 bytes
+  00B5A000 2101248 bytes
+  02100000 1052672 bytes
+  00A78000   94208 bytes
+  00977000   12288 bytes
+  01BA7000   12288 bytes
+  01254000   94208 bytes
+  05729000    4096 bytes
+  0221F000   73728 bytes
+  005AF000       0 bytes
+  012F8000   36864 bytes
+
+CT0CA 05675108 is in BO 05675000 (4 KB, bin list) + &108
+CT1CA 057286EF is in BO 05728000 (4 KB) + &6EF
+CT1RA 0572915C is in BO 05729000 (4 KB, render list) + &15C
+BPCA 02226000 is in BO 0221F000 (72 KB, tile alloc) + &7000
+
+Render list:
+  05729000  Tile Rendering Mode Cfg (Common): Pad=0, Early Depth/Stencil Clear=1, Internal Depth Type=1, Early-Z disable=0, Early-Z Test and Update Direction=0, Double-buffer in non-ms mode=0, Multisample Mode (4x)=0, Maximum BPP of all render targets=0, Image Height (pixels)=0x258, Image Width (pixels)=0x320, Number of Render Targets=1
+  05729009  Tile Rendering Mode Cfg (Clear Colors Part1): Clear Color next 24 bits=0, Clear Color low 32 bits=0xff000000, Render Target number=0
+  05729012  Tile Rendering Mode Cfg (Color): Pad=0, Render Target 3 Clamp=0, Render Target 3 Internal Type=0, Render Target 3 Internal BPP=0, Render Target 2 Clamp=0, Render Target 2 Internal Type=0, Render Target 2 Internal BPP=0, Render Target 1 Clamp=0, Render Target 1 Internal Type=0, Render Target 1 Internal BPP=0, Render Target 0 Clamp=0, Render Target 0 Internal Type=2, Render Target 0 Internal BPP=0
+  0572901B  Tile Rendering Mode Cfg (ZS Clear Values): unused=0, Z Clear Value=0, Stencil Clear Value=0
+  05729024  Tile List Initial Block Size: Use auto-chained tile lists=1, Size of first block in chained tile lists=1
+  05729026  Multicore Rendering Tile List Set Base: address=0x221f000, Tile List Set Number=0
+  0572902B  Multicore Rendering Supertile Cfg: Number of Bin Tile Lists=1, Supertile Raster Order=0, Multicore Enable=0, Total Frame Height in Tiles=0xa, Total Frame Width in Tiles=0xd, Total Frame Height in Supertiles=0xa, Total Frame Width in Supertiles=0xd, Supertile Height in Tiles=1, Supertile Width in Tiles=1
+  05729034  Tile Coordinates: tile row number=0, tile column number=0
+  05729038  End of Loads
+  05729039  Store Tile Buffer General: Address=0, Height=0, Height in UB or Stride=0, R/B swap=0, Channel Reverse=0, Clear buffer being stored=0, Output Image Format=0, Decimate mode=0, Dither Mode=0, Flip Y=0, Memory Format=0, Buffer to Store=8
+  05729046  Clear Tile Buffers: Clear Z/Stencil Buffer=0, Clear all Render Targets=1
+  05729048  End of Tile Marker
+  05729049  Tile Coordinates: tile row number=0, tile column number=0
+  0572904D  End of Loads
+  0572904E  Store Tile Buffer General: Address=0, Height=0, Height in UB or Stride=0, R/B swap=0, Channel Reverse=0, Clear buffer being stored=0, Output Image Format=0, Decimate mode=0, Dither Mode=0, Flip Y=0, Memory Format=0, Buffer to Store=8
+  0572905B  End of Tile Marker
+  0572905C  Flush VCD cache
+  0572905D  Start Address of Generic Tile List: start=0x57286e4, end=0x5728700
+  05729066  Supertile Coordinates: row number in supertiles=0, column number in supertiles=0
+  05729069  Supertile Coordinates: row number in supertiles=0, column number in supertiles=1
+  0572906C  Supertile Coordinates: row number in supertiles=0, column number in supertiles=2
+  0572906F  Supertile Coordinates: row number in supertiles=0, column number in supertiles=3
+  05729072  Supertile Coordinates: row number in supertiles=0, column number in supertiles=4
+  05729075  Supertile Coordinates: row number in supertiles=0, column number in supertiles=5
+  05729078  Supertile Coordinates: row number in supertiles=0, column number in supertiles=6
+  0572907B  Supertile Coordinates: row number in supertiles=0, column number in supertiles=7
+  0572907E  Supertile Coordinates: row number in supertiles=0, column number in supertiles=8
+  05729081  Supertile Coordinates: row number in supertiles=0, column number in supertiles=9
+  05729084  Supertile Coordinates: row number in supertiles=0, column number in supertiles=0xa
+  05729087  Supertile Coordinates: row number in supertiles=0, column number in supertiles=0xb
+  0572908A  Supertile Coordinates: row number in supertiles=0, column number in supertiles=0xc
+  0572908D  Supertile Coordinates: row number in supertiles=1, column number in supertiles=0
+  05729090  Supertile Coordinates: row number in supertiles=1, column number in supertiles=1
+  05729093  Supertile Coordinates: row number in supertiles=1, column number in supertiles=2
+  05729096  Supertile Coordinates: row number in supertiles=1, column number in supertiles=3
+  05729099  Supertile Coordinates: row number in supertiles=1, column number in supertiles=4
+  0572909C  Supertile Coordinates: row number in supertiles=1, column number in supertiles=5
+  0572909F  Supertile Coordinates: row number in supertiles=1, column number in supertiles=6
+  057290A2  Supertile Coordinates: row number in supertiles=1, column number in supertiles=7
+  057290A5  Supertile Coordinates: row number in supertiles=1, column number in supertiles=8
+  057290A8  Supertile Coordinates: row number in supertiles=1, column number in supertiles=9
+  057290AB  Supertile Coordinates: row number in supertiles=1, column number in supertiles=0xa
+  057290AE  Supertile Coordinates: row number in supertiles=1, column number in supertiles=0xb
+  057290B1  Supertile Coordinates: row number in supertiles=1, column number in supertiles=0xc
+  057290B4  Supertile Coordinates: row number in supertiles=2, column number in supertiles=0
+  057290B7  Supertile Coordinates: row number in supertiles=2, column number in supertiles=1
+  057290BA  Supertile Coordinates: row number in supertiles=2, column number in supertiles=2
+  057290BD  Supertile Coordinates: row number in supertiles=2, column number in supertiles=3
+  057290C0  Supertile Coordinates: row number in supertiles=2, column number in supertiles=4
+  057290C3  Supertile Coordinates: row number in supertiles=2, column number in supertiles=5
+  057290C6  Supertile Coordinates: row number in supertiles=2, column number in supertiles=6
+  057290C9  Supertile Coordinates: row number in supertiles=2, column number in supertiles=7
+  057290CC  Supertile Coordinates: row number in supertiles=2, column number in supertiles=8
+  057290CF  Supertile Coordinates: row number in supertiles=2, column number in supertiles=9
+  057290D2  Supertile Coordinates: row number in supertiles=2, column number in supertiles=0xa
+  057290D5  Supertile Coordinates: row number in supertiles=2, column number in supertiles=0xb
+  057290D8  Supertile Coordinates: row number in supertiles=2, column number in supertiles=0xc
+  057290DB  Supertile Coordinates: row number in supertiles=3, column number in supertiles=0
+  057290DE  Supertile Coordinates: row number in supertiles=3, column number in supertiles=1
+  057290E1  Supertile Coordinates: row number in supertiles=3, column number in supertiles=2
+  057290E4  Supertile Coordinates: row number in supertiles=3, column number in supertiles=3
+  057290E7  Supertile Coordinates: row number in supertiles=3, column number in supertiles=4
+  057290EA  Supertile Coordinates: row number in supertiles=3, column number in supertiles=5
+  057290ED  Supertile Coordinates: row number in supertiles=3, column number in supertiles=6
+  057290F0  Supertile Coordinates: row number in supertiles=3, column number in supertiles=7
+  057290F3  Supertile Coordinates: row number in supertiles=3, column number in supertiles=8
+  057290F6  Supertile Coordinates: row number in supertiles=3, column number in supertiles=9
+  057290F9  Supertile Coordinates: row number in supertiles=3, column number in supertiles=0xa
+  057290FC  Supertile Coordinates: row number in supertiles=3, column number in supertiles=0xb
+  057290FF  Supertile Coordinates: row number in supertiles=3, column number in supertiles=0xc
+  05729102  Supertile Coordinates: row number in supertiles=4, column number in supertiles=0
+  05729105  Supertile Coordinates: row number in supertiles=4, column number in supertiles=1
+  05729108  Supertile Coordinates: row number in supertiles=4, column number in supertiles=2
+  0572910B  Supertile Coordinates: row number in supertiles=4, column number in supertiles=3
+  0572910E  Supertile Coordinates: row number in supertiles=4, column number in supertiles=4
+  05729111  Supertile Coordinates: row number in supertiles=4, column number in supertiles=5
+  05729114  Supertile Coordinates: row number in supertiles=4, column number in supertiles=6
+  05729117  Supertile Coordinates: row number in supertiles=4, column number in supertiles=7
+  0572911A  Supertile Coordinates: row number in supertiles=4, column number in supertiles=8
+  0572911D  Supertile Coordinates: row number in supertiles=4, column number in supertiles=9
+  05729120  Supertile Coordinates: row number in supertiles=4, column number in supertiles=0xa
+  05729123  Supertile Coordinates: row number in supertiles=4, column number in supertiles=0xb
+  05729126  Supertile Coordinates: row number in supertiles=4, column number in supertiles=0xc
+  05729129  Supertile Coordinates: row number in supertiles=5, column number in supertiles=0
+  0572912C  Supertile Coordinates: row number in supertiles=5, column number in supertiles=1
+  0572912F  Supertile Coordinates: row number in supertiles=5, column number in supertiles=2
+  05729132  Supertile Coordinates: row number in supertiles=5, column number in supertiles=3
+  05729135  Supertile Coordinates: row number in supertiles=5, column number in supertiles=4
+  05729138  Supertile Coordinates: row number in supertiles=5, column number in supertiles=5
+  0572913B  Supertile Coordinates: row number in supertiles=5, column number in supertiles=6
+  0572913E  Supertile Coordinates: row number in supertiles=5, column number in supertiles=7
+  05729141  Supertile Coordinates: row number in supertiles=5, column number in supertiles=8
+  05729144  Supertile Coordinates: row number in supertiles=5, column number in supertiles=9
+  05729147  Supertile Coordinates: row number in supertiles=5, column number in supertiles=0xa
+  0572914A  Supertile Coordinates: row number in supertiles=5, column number in supertiles=0xb
+  0572914D  Supertile Coordinates: row number in supertiles=5, column number in supertiles=0xc
+  05729150  Supertile Coordinates: row number in supertiles=6, column number in supertiles=0
+  05729153  Supertile Coordinates: row number in supertiles=6, column number in supertiles=1
+  05729156  Supertile Coordinates: row number in supertiles=6, column number in supertiles=2
+  05729159  Supertile Coordinates: row number in supertiles=6, column number in supertiles=3
+  0572915C  Supertile Coordinates: row number in supertiles=6, column number in supertiles=4
+  0572915F  Supertile Coordinates: row number in supertiles=6, column number in supertiles=5
+  05729162  Supertile Coordinates: row number in supertiles=6, column number in supertiles=6
+  05729165  Supertile Coordinates: row number in supertiles=6, column number in supertiles=7
+  05729168  Supertile Coordinates: row number in supertiles=6, column number in supertiles=8
+  0572916B  Supertile Coordinates: row number in supertiles=6, column number in supertiles=9
+  0572916E  Supertile Coordinates: row number in supertiles=6, column number in supertiles=0xa
+  05729171  Supertile Coordinates: row number in supertiles=6, column number in supertiles=0xb
+  05729174  Supertile Coordinates: row number in supertiles=6, column number in supertiles=0xc
+  05729177  Supertile Coordinates: row number in supertiles=7, column number in supertiles=0
+  0572917A  Supertile Coordinates: row number in supertiles=7, column number in supertiles=1
+  0572917D  Supertile Coordinates: row number in supertiles=7, column number in supertiles=2
+  05729180  Supertile Coordinates: row number in supertiles=7, column number in supertiles=3
+  05729183  Supertile Coordinates: row number in supertiles=7, column number in supertiles=4
+  05729186  Supertile Coordinates: row number in supertiles=7, column number in supertiles=5
+  05729189  Supertile Coordinates: row number in supertiles=7, column number in supertiles=6
+  0572918C  Supertile Coordinates: row number in supertiles=7, column number in supertiles=7
+  0572918F  Supertile Coordinates: row number in supertiles=7, column number in supertiles=8
+  05729192  Supertile Coordinates: row number in supertiles=7, column number in supertiles=9
+  05729195  Supertile Coordinates: row number in supertiles=7, column number in supertiles=0xa
+  05729198  Supertile Coordinates: row number in supertiles=7, column number in supertiles=0xb
+  0572919B  Supertile Coordinates: row number in supertiles=7, column number in supertiles=0xc
+  0572919E  Supertile Coordinates: row number in supertiles=8, column number in supertiles=0
+  057291A1  Supertile Coordinates: row number in supertiles=8, column number in supertiles=1
+  057291A4  Supertile Coordinates: row number in supertiles=8, column number in supertiles=2
+  057291A7  Supertile Coordinates: row number in supertiles=8, column number in supertiles=3
+  057291AA  Supertile Coordinates: row number in supertiles=8, column number in supertiles=4
+  057291AD  Supertile Coordinates: row number in supertiles=8, column number in supertiles=5
+  057291B0  Supertile Coordinates: row number in supertiles=8, column number in supertiles=6
+  057291B3  Supertile Coordinates: row number in supertiles=8, column number in supertiles=7
+  057291B6  Supertile Coordinates: row number in supertiles=8, column number in supertiles=8
+  057291B9  Supertile Coordinates: row number in supertiles=8, column number in supertiles=9
+  057291BC  Supertile Coordinates: row number in supertiles=8, column number in supertiles=0xa
+  057291BF  Supertile Coordinates: row number in supertiles=8, column number in supertiles=0xb
+  057291C2  Supertile Coordinates: row number in supertiles=8, column number in supertiles=0xc
+  057291C5  Supertile Coordinates: row number in supertiles=9, column number in supertiles=0
+  057291C8  Supertile Coordinates: row number in supertiles=9, column number in supertiles=1
+  057291CB  Supertile Coordinates: row number in supertiles=9, column number in supertiles=2
+  057291CE  Supertile Coordinates: row number in supertiles=9, column number in supertiles=3
+  057291D1  Supertile Coordinates: row number in supertiles=9, column number in supertiles=4
+  057291D4  Supertile Coordinates: row number in supertiles=9, column number in supertiles=5
+  057291D7  Supertile Coordinates: row number in supertiles=9, column number in supertiles=6
+  057291DA  Supertile Coordinates: row number in supertiles=9, column number in supertiles=7
+  057291DD  Supertile Coordinates: row number in supertiles=9, column number in supertiles=8
+  057291E0  Supertile Coordinates: row number in supertiles=9, column number in supertiles=9
+  057291E3  Supertile Coordinates: row number in supertiles=9, column number in supertiles=0xa
+  057291E6  Supertile Coordinates: row number in supertiles=9, column number in supertiles=0xb
+  057291E9  Supertile Coordinates: row number in supertiles=9, column number in supertiles=0xc
+  057291EC  End of rendering
+
+Generic tile list 057286E4-05728700:
+  057286E4  Halt
+
+Bin list:
+  05675000  Number of Layers: Number of Layers=1
+  05675002  Tile Binning Mode Cfg: Height (in pixels)=0x258, Width (in pixels)=0x320, Double-buffer in non-ms mode=0, Multisample Mode (4x)=0, Maximum BPP of all render targets=0, Number of Render Targets=1, tile allocation block size=0, tile allocation initial block size=1
+  0567500B  Flush VCD cache
+  0567500C  Occlusion Query Counter: address=0
+  05675011  Start Tile Binning
+  05675012  clip_window: Clip Window Height in pixels=0x258, Clip Window Width in pixels=0x320, Clip Window Bottom Pixel Coordinate=0, Clip Window Left Pixel Coordinate=0
+  0567501B  Cfg Bits: Direct3D Provoking Vertex=0, Direct3D 'Point-fill' mode=0, Blend enable=1, Stencil enable=0, Early Z updates enable=1, Early Z enable=0, Z updates enable=0, Depth-Test Function=7, Direct3D Wireframe triangles mode=0, Rasterizer Oversample Mode=0, Line Rasterization=0, Enable Depth Offset=0, Clockwise Primitives=1, Enable Reverse Facing Primitive=1, Enable Forward Facing Primitive=0
+  0567501F  Point size: Point Size=0x3f800000
+  05675024  Line width: Line width=0x3f800000
+  05675029  Clipper XY Scaling: Viewport Half-Height in 1/256th of pixel=0xc7960000, Viewport Half-Width in 1/256th of pixel=0x47c80000
+  05675032  Clipper Z Scale and Offset: Viewport Z Offset (Zc to Zs)=0x3f000000, Viewport Z Scale (Zc to Zs)=0x3f000000
+  0567503B  Clipper Z min/max clipping planes: Maximum Zw=0x3f800000, Minimum Zw=0
+  05675044  Viewport Offset: Coarse Y=0, Fine Y=0x12c00, Coarse X=0, Fine X=0x19000
+  0567504D  Blend Enables: Mask=0xf
+  0567504F  Blend Cfg: Render Target Mask=0xf, Color blend dst factor=7, Color blend src factor=6, Color blend mode=0, Alpha blend dst factor=7, Alpha blend src factor=6, Alpha blend mode=0
+  05675054  Color Write Masks: Mask=0
+  05675059  Blend Constant Color: Alpha (F16)=0, Blue (F16)=0, Green (F16)=0, Red (F16)=0
+  05675062  Zero All Flat Shade Flags
+  05675063  Zero All Non-perspective Flags
+  05675064  Zero All Centroid Flags
+  05675065  Transform Feedback Specs: Enable=0, Number of 16-bit Output Data Specs following=0
+  05675067  Occlusion Query Counter: address=0
+  0567506C  Sample State: Coverage=0x3f80, Mask=0xf
+  05675071  VCM Cache Size: Number of 16-vertex batches for rendering=4, Number of 16-vertex batches for binning=4
+  05675073  GL Shader State: address=0x5728120, number of attribute arrays=2
+  05675078  Index Buffer Setup: Address=0x2100000, Size=0x101000
+  05675081  Indexed Prim List: Index Offset=0x366c0, Enable Primitive Restarts=0, Length=6, Index type=2, mode=4
+  0567508B  Point size: Point Size=0x3f800000
+  05675090  VCM Cache Size: Number of 16-vertex batches for rendering=4, Number of 16-vertex batches for binning=4
+  05675092  GL Shader State: address=0x5728280, number of attribute arrays=2
+  05675097  Index Buffer Setup: Address=0x2100000, Size=0x101000
+  056750A0  Indexed Prim List: Index Offset=0x366d8, Enable Primitive Restarts=0, Length=0x2a, Index type=2, mode=4
+  056750AA  Point size: Point Size=0x3f800000
+  056750AF  VCM Cache Size: Number of 16-vertex batches for rendering=4, Number of 16-vertex batches for binning=4
+  056750B1  GL Shader State: address=0x57283e0, number of attribute arrays=2
+  056750B6  Index Buffer Setup: Address=0x2100000, Size=0x101000
+  056750BF  Indexed Prim List: Index Offset=0x36780, Enable Primitive Restarts=0, Length=6, Index type=2, mode=4
+  056750C9  Point size: Point Size=0x3f800000
+  056750CE  VCM Cache Size: Number of 16-vertex batches for rendering=4, Number of 16-vertex batches for binning=4
+  056750D0  GL Shader State: address=0x5728540, number of attribute arrays=2
+  056750D5  Index Buffer Setup: Address=0x2100000, Size=0x101000
+  056750DE  Indexed Prim List: Index Offset=0x36798, Enable Primitive Restarts=0, Length=6, Index type=2, mode=4
+  056750E8  Point size: Point Size=0x3f800000
+  056750ED  VCM Cache Size: Number of 16-vertex batches for rendering=4, Number of 16-vertex batches for binning=4
+  056750EF  GL Shader State: address=0x57286a0, number of attribute arrays=2
+  056750F4  Index Buffer Setup: Address=0x2100000, Size=0x101000
+  056750FD  Indexed Prim List: Index Offset=0x367b0, Enable Primitive Restarts=0, Length=0x2a, Index type=2, mode=4
+  05675107  Flush
+
+GL Shader State Record at 05728120:
+  Point size in shaded vertex data=0
+  Enable clipping=1
+  Vertex ID read by coordinate shader=0
+  Instance ID read by coordinate shader=0
+  Base Instance ID read by coordinate shader=0
+  Vertex ID read by vertex shader=0
+  Instance ID read by vertex shader=0
+  Base Instance ID read by vertex shader=0
+  Fragment shader does Z writes=0
+  Turn off early-z test=0
+  Coordinate shader has separate input and output VPM blocks=0
+  Vertex shader has separate input and output VPM blocks=0
+  Fragment shader uses real pixel centre W in addition to centroid W2=1
+  Enable Sample Rate Shading=0
+  Any shader reads hardware-written Primitive ID=0
+  Insert Primitive ID as first varying to fragment shader=0
+  Turn off scoreboard=0
+  Do scoreboard wait on first thread switch=0
+  Disable implicit point/line varyings=1
+  No prim pack=0
+  Number of varyings in Fragment Shader=4
+  Coordinate Shader output VPM segment size=1
+  Min Coord Shader output segments required in play in addition to VCM cache size=0
+  Coordinate Shader input VPM segment size=1
+  Min Coord Shader input segments required in play=1
+  Vertex Shader output VPM segment size=1
+  Min Vertex Shader output segments required in play in addition to VCM cache size=0
+  Vertex Shader input VPM segment size=1
+  Min Vertex Shader input segments required in play=1
+  Address of default attribute values=0x201910
+  Fragment Shader Code Address=0x201db0
+  Fragment Shader 4-way threadable=1
+  Fragment Shader start in final thread section=0
+  Fragment Shader Propagate NaNs=1
+  Fragment Shader Uniforms Address=0x5728000
+  Vertex Shader Code Address=0x201aa8
+  Vertex Shader 4-way threadable=1
+  Vertex Shader start in final thread section=1
+  Vertex Shader Propagate NaNs=1
+  Vertex Shader Uniforms Address=0x5728018
+  Coordinate Shader Code Address=0x201c20
+  Coordinate Shader 4-way threadable=1
+  Coordinate Shader start in final thread section=1
+  Coordinate Shader Propagate NaNs=1
+  Coordinate Shader Uniforms Address=0x57280a0
+
+GL Shader State Attribute Record at 05728144:
+  Address=0xb5a000
+  Vec size=3
+  Type=2
+  Signed int type=0
+  Normalized int type=0
+  Read as int/uint=0
+  Number of values read by Coordinate shader=4
+  Number of values read by Vertex shader=4
+  Instance Divisor=0
+  Stride=0x3c
+  Maximum Index=0xffffff
+
+GL Shader State Attribute Record at 05728154:
+  Address=0xb5a00c
+  Vec size=2
+  Type=2
+  Signed int type=0
+  Normalized int type=0
+  Read as int/uint=0
+  Number of values read by Coordinate shader=4
+  Number of values read by Vertex shader=4
+  Instance Divisor=0
+  Stride=0x3c
+  Maximum Index=0xffffff
+
+GL Shader State Record at 05728280:
+  Point size in shaded vertex data=0
+  Enable clipping=1
+  Vertex ID read by coordinate shader=0
+  Instance ID read by coordinate shader=0
+  Base Instance ID read by coordinate shader=0
+  Vertex ID read by vertex shader=0
+  Instance ID read by vertex shader=0
+  Base Instance ID read by vertex shader=0
+  Fragment shader does Z writes=0
+  Turn off early-z test=0
+  Coordinate shader has separate input and output VPM blocks=0
+  Vertex shader has separate input and output VPM blocks=0
+  Fragment shader uses real pixel centre W in addition to centroid W2=1
+  Enable Sample Rate Shading=0
+  Any shader reads hardware-written Primitive ID=0
+  Insert Primitive ID as first varying to fragment shader=0
+  Turn off scoreboard=0
+  Do scoreboard wait on first thread switch=0
+  Disable implicit point/line varyings=1
+  No prim pack=0
+  Number of varyings in Fragment Shader=4
+  Coordinate Shader output VPM segment size=1
+  Min Coord Shader output segments required in play in addition to VCM cache size=0
+  Coordinate Shader input VPM segment size=1
+  Min Coord Shader input segments required in play=1
+  Vertex Shader output VPM segment size=1
+  Min Vertex Shader output segments required in play in addition to VCM cache size=0
+  Vertex Shader input VPM segment size=1
+  Min Vertex Shader input segments required in play=1
+  Address of default attribute values=0x201910
+  Fragment Shader Code Address=0x201db0
+  Fragment Shader 4-way threadable=1
+  Fragment Shader start in final thread section=0
+  Fragment Shader Propagate NaNs=1
+  Fragment Shader Uniforms Address=0x5728164
+  Vertex Shader Code Address=0x201aa8
+  Vertex Shader 4-way threadable=1
+  Vertex Shader start in final thread section=1
+  Vertex Shader Propagate NaNs=1
+  Vertex Shader Uniforms Address=0x572817c
+  Coordinate Shader Code Address=0x201c20
+  Coordinate Shader 4-way threadable=1
+  Coordinate Shader start in final thread section=1
+  Coordinate Shader Propagate NaNs=1
+  Coordinate Shader Uniforms Address=0x5728204
+
+GL Shader State Attribute Record at 057282A4:
+  Address=0xb5a0f0
+  Vec size=3
+  Type=2
+  Signed int type=0
+  Normalized int type=0
+  Read as int/uint=0
+  Number of values read by Coordinate shader=4
+  Number of values read by Vertex shader=4
+  Instance Divisor=0
+  Stride=0x3c
+  Maximum Index=0xffffff
+
+GL Shader State Attribute Record at 057282B4:
+  Address=0xb5a0fc
+  Vec size=2
+  Type=2
+  Signed int type=0
+  Normalized int type=0
+  Read as int/uint=0
+  Number of values read by Coordinate shader=4
+  Number of values read by Vertex shader=4
+  Instance Divisor=0
+  Stride=0x3c
+  Maximum Index=0xffffff
+
+GL Shader State Record at 057283E0:
+  Point size in shaded vertex data=0
+  Enable clipping=1
+  Vertex ID read by coordinate shader=0
+  Instance ID read by coordinate shader=0
+  Base Instance ID read by coordinate shader=0
+  Vertex ID read by vertex shader=0
+  Instance ID read by vertex shader=0
+  Base Instance ID read by vertex shader=0
+  Fragment shader does Z writes=0
+  Turn off early-z test=0
+  Coordinate shader has separate input and output VPM blocks=0
+  Vertex shader has separate input and output VPM blocks=0
+  Fragment shader uses real pixel centre W in addition to centroid W2=1
+  Enable Sample Rate Shading=0
+  Any shader reads hardware-written Primitive ID=0
+  Insert Primitive ID as first varying to fragment shader=0
+  Turn off scoreboard=0
+  Do scoreboard wait on first thread switch=0
+  Disable implicit point/line varyings=1
+  No prim pack=0
+  Number of varyings in Fragment Shader=4
+  Coordinate Shader output VPM segment size=1
+  Min Coord Shader output segments required in play in addition to VCM cache size=0
+  Coordinate Shader input VPM segment size=1
+  Min Coord Shader input segments required in play=1
+  Vertex Shader output VPM segment size=1
+  Min Vertex Shader output segments required in play in addition to VCM cache size=0
+  Vertex Shader input VPM segment size=1
+  Min Vertex Shader input segments required in play=1
+  Address of default attribute values=0x201910
+  Fragment Shader Code Address=0x201db0
+  Fragment Shader 4-way threadable=1
+  Fragment Shader start in final thread section=0
+  Fragment Shader Propagate NaNs=1
+  Fragment Shader Uniforms Address=0x57282c4
+  Vertex Shader Code Address=0x201aa8
+  Vertex Shader 4-way threadable=1
+  Vertex Shader start in final thread section=1
+  Vertex Shader Propagate NaNs=1
+  Vertex Shader Uniforms Address=0x57282dc
+  Coordinate Shader Code Address=0x201c20
+  Coordinate Shader 4-way threadable=1
+  Coordinate Shader start in final thread section=1
+  Coordinate Shader Propagate NaNs=1
+  Coordinate Shader Uniforms Address=0x5728364
+
+GL Shader State Attribute Record at 05728404:
+  Address=0xb5a780
+  Vec size=3
+  Type=2
+  Signed int type=0
+  Normalized int type=0
+  Read as int/uint=0
+  Number of values read by Coordinate shader=4
+  Number of values read by Vertex shader=4
+  Instance Divisor=0
+  Stride=0x3c
+  Maximum Index=0xffffff
+
+GL Shader State Attribute Record at 05728414:
+  Address=0xb5a78c
+  Vec size=2
+  Type=2
+  Signed int type=0
+  Normalized int type=0
+  Read as int/uint=0
+  Number of values read by Coordinate shader=4
+  Number of values read by Vertex shader=4
+  Instance Divisor=0
+  Stride=0x3c
+  Maximum Index=0xffffff
+
+GL Shader State Record at 05728540:
+  Point size in shaded vertex data=0
+  Enable clipping=1
+  Vertex ID read by coordinate shader=0
+  Instance ID read by coordinate shader=0
+  Base Instance ID read by coordinate shader=0
+  Vertex ID read by vertex shader=0
+  Instance ID read by vertex shader=0
+  Base Instance ID read by vertex shader=0
+  Fragment shader does Z writes=0
+  Turn off early-z test=0
+  Coordinate shader has separate input and output VPM blocks=0
+  Vertex shader has separate input and output VPM blocks=0
+  Fragment shader uses real pixel centre W in addition to centroid W2=1
+  Enable Sample Rate Shading=0
+  Any shader reads hardware-written Primitive ID=0
+  Insert Primitive ID as first varying to fragment shader=0
+  Turn off scoreboard=0
+  Do scoreboard wait on first thread switch=0
+  Disable implicit point/line varyings=1
+  No prim pack=0
+  Number of varyings in Fragment Shader=4
+  Coordinate Shader output VPM segment size=1
+  Min Coord Shader output segments required in play in addition to VCM cache size=0
+  Coordinate Shader input VPM segment size=1
+  Min Coord Shader input segments required in play=1
+  Vertex Shader output VPM segment size=1
+  Min Vertex Shader output segments required in play in addition to VCM cache size=0
+  Vertex Shader input VPM segment size=1
+  Min Vertex Shader input segments required in play=1
+  Address of default attribute values=0x201910
+  Fragment Shader Code Address=0x201db0
+  Fragment Shader 4-way threadable=1
+  Fragment Shader start in final thread section=0
+  Fragment Shader Propagate NaNs=1
+  Fragment Shader Uniforms Address=0x5728424
+  Vertex Shader Code Address=0x201aa8
+  Vertex Shader 4-way threadable=1
+  Vertex Shader start in final thread section=1
+  Vertex Shader Propagate NaNs=1
+  Vertex Shader Uniforms Address=0x572843c
+  Coordinate Shader Code Address=0x201c20
+  Coordinate Shader 4-way threadable=1
+  Coordinate Shader start in final thread section=1
+  Coordinate Shader Propagate NaNs=1
+  Coordinate Shader Uniforms Address=0x57284c4
+
+GL Shader State Attribute Record at 05728564:
+  Address=0xb5a870
+  Vec size=3
+  Type=2
+  Signed int type=0
+  Normalized int type=0
+  Read as int/uint=0
+  Number of values read by Coordinate shader=4
+  Number of values read by Vertex shader=4
+  Instance Divisor=0
+  Stride=0x3c
+  Maximum Index=0xffffff
+
+GL Shader State Attribute Record at 05728574:
+  Address=0xb5a87c
+  Vec size=2
+  Type=2
+  Signed int type=0
+  Normalized int type=0
+  Read as int/uint=0
+  Number of values read by Coordinate shader=4
+  Number of values read by Vertex shader=4
+  Instance Divisor=0
+  Stride=0x3c
+  Maximum Index=0xff000000
+
+GL Shader State Record at 057286A0:
+  Point size in shaded vertex data=0
+  Enable clipping=0
+  Vertex ID read by coordinate shader=0
+  Instance ID read by coordinate shader=0
+  Base Instance ID read by coordinate shader=0
+  Vertex ID read by vertex shader=0
+  Instance ID read by vertex shader=0
+  Base Instance ID read by vertex shader=0
+  Fragment shader does Z writes=0
+  Turn off early-z test=0
+  Coordinate shader has separate input and output VPM blocks=0
+  Vertex shader has separate input and output VPM blocks=0
+  Fragment shader uses real pixel centre W in addition to centroid W2=0
+  Enable Sample Rate Shading=0
+  Any shader reads hardware-written Primitive ID=0
+  Insert Primitive ID as first varying to fragment shader=0
+  Turn off scoreboard=0
+  Do scoreboard wait on first thread switch=0
+  Disable implicit point/line varyings=0
+  No prim pack=0
+  Number of varyings in Fragment Shader=0xff
+  Coordinate Shader output VPM segment size=0
+  Min Coord Shader output segments required in play in addition to VCM cache size=0
+  Coordinate Shader input VPM segment size=0
+  Min Coord Shader input segments required in play=1
+  Vertex Shader output VPM segment size=0
+  Min Vertex Shader output segments required in play in addition to VCM cache size=0
+  Vertex Shader input VPM segment size=0xf
+  Min Vertex Shader input segments required in play=0x10
+  Address of default attribute values=0xff000000
+  Fragment Shader Code Address=0xff000000
+  Fragment Shader 4-way threadable=0
+  Fragment Shader start in final thread section=0
+  Fragment Shader Propagate NaNs=0
+  Fragment Shader Uniforms Address=0xff000000
+  Vertex Shader Code Address=0xff000000
+  Vertex Shader 4-way threadable=0
+  Vertex Shader start in final thread section=0
+  Vertex Shader Propagate NaNs=0
+  Vertex Shader Uniforms Address=0xff000000
+  Coordinate Shader Code Address=0xff000000
+  Coordinate Shader 4-way threadable=0
+  Coordinate Shader start in final thread section=0
+  Coordinate Shader Propagate NaNs=0
+  Coordinate Shader Uniforms Address=0xff000000
+
+GL Shader State Attribute Record at 057286C4:
+  Address=0xff000000
+  Vec size=0
+  Type=0
+  Signed int type=0
+  Normalized int type=0
+  Read as int/uint=0
+  Number of values read by Coordinate shader=0
+  Number of values read by Vertex shader=0
+  Instance Divisor=0xff00
+  Stride=0xff000000
+  Maximum Index=0xff000000
+
+GL Shader State Attribute Record at 057286D4:
+  Address=0xff000000
+  Vec size=0
+  Type=0
+  Signed int type=0
+  Normalized int type=0
+  Read as int/uint=0
+  Number of values read by Coordinate shader=0
+  Number of values read by Vertex shader=0
+  Instance Divisor=0xff00
+  Stride=0xff000000
+  Maximum Index=0xff000000
+
+Around the hung list's CA (057286EF):
+  057286A0  00 00 00 ff 00 00 00 ff 00 00 00 ff 00 00 00 ff
+  057286B0  00 00 00 ff 00 00 00 ff 00 00 00 ff 00 00 00 ff
+  057286C0  00 00 00 ff 00 00 00 ff 00 00 00 ff 00 00 00 ff
+  057286D0  00 00 00 ff 00 00 00 ff 00 00 00 ff 00 00 00 ff
+  057286E0  00 00 00 ff 00 00 00 ff 00 00 00 ff 00 00 00 ff
+  057286F0  00 00 00 ff 00 00 00 ff 00 00 00 ff 00 00 00 ff
+  05728700  00 00 00 ff 00 00 00 ff 00 00 00 ff 00 00 00 ff
+  05728710  00 00 00 ff 00 00 00 ff 00 00 00 ff 00 00 00 ff
+  05728720  00 00 00 ff 00 00 00 ff 00 00 00 ff 00 00 00 ff
+
+Tile alloc, first 1 KB (each tile's first block):
+  0221F000  38 02 47 44 40 22 81 72 05 53 0f 54 60 07 76 0f
+  0221F010  56 00 00 00 00 00 00 00 00 57 00 00 00 00 60 06
+  0221F020  70 0a 61 58 63 5b 0f 00 80 3f 5c 00 00 00 00 68
+  0221F030  00 00 80 3f 69 00 00 80 3f 6c 00 90 01 00 00 2c
+  0221F040  01 00 6b 00 00 00 00 20 03 58 02 6d 00 00 00 00
+  0221F050  00 00 80 3f 30 db ff 03 00 fc e3 12 00 00 60 06
+  0221F060  70 0a 61 58 63 5b 0f 00 80 3f 5c 00 00 00 00 68
+  0221F070  00 00 80 3f 69 00 00 80 3f 6c 00 90 00 00 00 00
+  0221F080  38 02 47 44 40 22 81 72 05 53 0f 54 60 07 76 0f
+  0221F090  56 00 00 00 00 00 00 00 00 57 00 00 00 00 60 06
+  0221F0A0  70 0a 61 58 63 5b 0f 00 80 3f 5c 00 00 00 00 68
+  0221F0B0  00 00 80 3f 69 00 00 80 3f 6c 00 90 01 00 00 2c
+  0221F0C0  01 00 6b 00 00 00 00 20 03 58 02 6d 00 00 00 00
+  0221F0D0  00 00 80 3f 30 db ff 03 00 fc e3 12 00 00 60 06
+  0221F0E0  70 0a 61 58 63 5b 0f 00 80 3f 5c 00 00 00 00 68
+  0221F0F0  00 00 80 3f 69 00 00 80 3f 6c 00 90 00 00 00 00
+  0221F100  38 02 47 44 40 22 81 72 05 53 0f 54 60 07 76 0f
+  0221F110  56 00 00 00 00 00 00 00 00 57 00 00 00 00 60 06
+  0221F120  70 0a 61 58 63 5b 0f 00 80 3f 5c 00 00 00 00 68
+  0221F130  00 00 80 3f 69 00 00 80 3f 6c 00 90 01 00 00 2c
+  0221F140  01 00 6b 00 00 00 00 20 03 58 02 6d 00 00 00 00
+  0221F150  00 00 80 3f 30 eb ff 02 00 e3 12 00 00 00 60 06
+  0221F160  70 0a 61 58 63 5b 0f 00 80 3f 5c 00 00 00 00 68
+  0221F170  00 00 80 3f 69 00 00 80 3f 6c 00 90 00 00 00 00
+  0221F180  38 02 47 44 40 22 81 72 05 53 0f 54 60 07 76 0f
+  0221F190  56 00 00 00 00 00 00 00 00 57 00 00 00 00 60 06
+  0221F1A0  70 0a 61 58 63 5b 0f 00 80 3f 5c 00 00 00 00 68
+  0221F1B0  00 00 80 3f 69 00 00 80 3f 6c 00 90 01 00 00 2c
+  0221F1C0  01 00 6b 00 00 00 00 20 03 58 02 6d 00 00 00 00
+  0221F1D0  00 00 80 3f 30 eb ff 02 00 e3 12 00 00 00 60 06
+  0221F1E0  70 0a 61 58 63 5b 0f 00 80 3f 5c 00 00 00 00 68
+  0221F1F0  00 00 80 3f 69 00 00 80 3f 6c 00 90 00 00 00 00
+  0221F200  38 02 47 44 40 22 81 72 05 53 0f 54 60 07 76 0f
+  0221F210  56 00 00 00 00 00 00 00 00 57 00 00 00 00 60 06
+  0221F220  70 0a 61 58 63 5b 0f 00 80 3f 5c 00 00 00 00 68
+  0221F230  00 00 80 3f 69 00 00 80 3f 6c 00 90 01 00 00 2c
+  0221F240  01 00 6b 00 00 00 00 20 03 58 02 6d 00 00 00 00
+  0221F250  00 00 80 3f 30 eb ff 02 00 e3 12 00 00 00 60 06
+  0221F260  70 0a 61 58 63 5b 0f 00 80 3f 5c 00 00 00 00 68
+  0221F270  00 00 80 3f 69 00 00 80 3f 6c 00 90 00 00 00 00
+  0221F280  38 02 47 44 40 22 81 72 05 53 0f 54 60 07 76 0f
+  0221F290  56 00 00 00 00 00 00 00 00 57 00 00 00 00 60 06
+  0221F2A0  70 0a 61 58 63 5b 0f 00 80 3f 5c 00 00 00 00 68
+  0221F2B0  00 00 80 3f 69 00 00 80 3f 6c 00 90 01 00 00 2c
+  0221F2C0  01 00 6b 00 00 00 00 20 03 58 02 6d 00 00 00 00
+  0221F2D0  00 00 80 3f 30 eb ff 02 00 e3 12 00 00 00 60 06
+  0221F2E0  70 0a 61 58 63 5b 0f 00 80 3f 5c 00 00 00 00 68
+  0221F2F0  00 00 80 3f 69 00 00 80 3f 6c 00 90 00 00 00 00
+  0221F300  38 02 47 44 40 22 81 72 05 53 0f 54 60 07 76 0f
+  0221F310  56 00 00 00 00 00 00 00 00 57 00 00 00 00 60 06
+  0221F320  70 0a 61 58 63 5b 0f 00 80 3f 5c 00 00 00 00 68
+  0221F330  00 00 80 3f 69 00 00 80 3f 6c 00 90 01 00 00 2c
+  0221F340  01 00 6b 00 00 00 00 20 03 58 02 6d 00 00 00 00
+  0221F350  00 00 80 3f 30 eb ff 02 00 e3 12 00 00 00 60 06
+  0221F360  70 0a 61 58 63 5b 0f 00 80 3f 5c 00 00 00 00 68
+  0221F370  00 00 80 3f 69 00 00 80 3f 6c 00 90 00 00 00 00
+  0221F380  38 02 47 44 40 22 81 72 05 53 0f 54 60 07 76 0f
+  0221F390  56 00 00 00 00 00 00 00 00 57 00 00 00 00 60 06
+  0221F3A0  70 0a 61 58 63 5b 0f 00 80 3f 5c 00 00 00 00 68
+  0221F3B0  00 00 80 3f 69 00 00 80 3f 6c 00 90 01 00 00 2c
+  0221F3C0  01 00 6b 00 00 00 00 20 03 58 02 6d 00 00 00 00
+  0221F3D0  00 00 80 3f 30 eb ff 02 00 e3 12 00 00 00 60 06
+  0221F3E0  70 0a 61 58 63 5b 0f 00 80 3f 5c 00 00 00 00 68
+  0221F3F0  00 00 80 3f 69 00 00 80 3f 6c 00 90 00 00 00 00
+
+Tile lists, decoded from each 64-byte block start (until an unknown opcode):
+ tile block 0:
+  0221F000  Prim List Format: tri strip or fan=0, primitive type=2
+  0221F002  VCM Cache Size: Number of 16-vertex batches for rendering=4, Number of 16-vertex batches for binning=4
+  0221F004  GL Shader State: address=0x5728120, number of attribute arrays=2
+  0221F009  Blend Enables: Mask=0xf
+  0221F00B  Blend Cfg: Render Target Mask=0xf, Color blend dst factor=7, Color blend src factor=6, Color blend mode=0, Alpha blend dst factor=7, Alpha blend src factor=6, Alpha blend mode=0
+  0221F010  Blend Constant Color: Alpha (F16)=0, Blue (F16)=0, Green (F16)=0, Red (F16)=0
+  0221F019  Color Write Masks: Mask=0
+  0221F01E  Cfg Bits: Direct3D Provoking Vertex=0, Direct3D 'Point-fill' mode=0, Blend enable=1, Stencil enable=0, Early Z updates enable=1, Early Z enable=0, Z updates enable=0, Depth-Test Function=7, Direct3D Wireframe triangles mode=0, Rasterizer Oversample Mode=0, Line Rasterization=0, Enable Depth Offset=0, Clockwise Primitives=1, Enable Reverse Facing Primitive=1, Enable Forward Facing Primitive=0
+  0221F022  Zero All Flat Shade Flags
+  0221F023  Zero All Centroid Flags
+  0221F024  Zero All Non-perspective Flags
+  0221F025  Sample State: Coverage=0x3f80, Mask=0xf
+ tile block 1:
+  0221F040  NOP
+  0221F041  Halt
+ tile block 2:
+  0221F080  Prim List Format: tri strip or fan=0, primitive type=2
+  0221F082  VCM Cache Size: Number of 16-vertex batches for rendering=4, Number of 16-vertex batches for binning=4
+  0221F084  GL Shader State: address=0x5728120, number of attribute arrays=2
+  0221F089  Blend Enables: Mask=0xf
+  0221F08B  Blend Cfg: Render Target Mask=0xf, Color blend dst factor=7, Color blend src factor=6, Color blend mode=0, Alpha blend dst factor=7, Alpha blend src factor=6, Alpha blend mode=0
+  0221F090  Blend Constant Color: Alpha (F16)=0, Blue (F16)=0, Green (F16)=0, Red (F16)=0
+  0221F099  Color Write Masks: Mask=0
+  0221F09E  Cfg Bits: Direct3D Provoking Vertex=0, Direct3D 'Point-fill' mode=0, Blend enable=1, Stencil enable=0, Early Z updates enable=1, Early Z enable=0, Z updates enable=0, Depth-Test Function=7, Direct3D Wireframe triangles mode=0, Rasterizer Oversample Mode=0, Line Rasterization=0, Enable Depth Offset=0, Clockwise Primitives=1, Enable Reverse Facing Primitive=1, Enable Forward Facing Primitive=0
+  0221F0A2  Zero All Flat Shade Flags
+  0221F0A3  Zero All Centroid Flags
+  0221F0A4  Zero All Non-perspective Flags
+  0221F0A5  Sample State: Coverage=0x3f80, Mask=0xf
+ tile block 3:
+  0221F0C0  NOP
+  0221F0C1  Halt
+ tile block 4:
+  0221F100  Prim List Format: tri strip or fan=0, primitive type=2
+  0221F102  VCM Cache Size: Number of 16-vertex batches for rendering=4, Number of 16-vertex batches for binning=4
+  0221F104  GL Shader State: address=0x5728120, number of attribute arrays=2
+  0221F109  Blend Enables: Mask=0xf
+  0221F10B  Blend Cfg: Render Target Mask=0xf, Color blend dst factor=7, Color blend src factor=6, Color blend mode=0, Alpha blend dst factor=7, Alpha blend src factor=6, Alpha blend mode=0
+  0221F110  Blend Constant Color: Alpha (F16)=0, Blue (F16)=0, Green (F16)=0, Red (F16)=0
+  0221F119  Color Write Masks: Mask=0
+  0221F11E  Cfg Bits: Direct3D Provoking Vertex=0, Direct3D 'Point-fill' mode=0, Blend enable=1, Stencil enable=0, Early Z updates enable=1, Early Z enable=0, Z updates enable=0, Depth-Test Function=7, Direct3D Wireframe triangles mode=0, Rasterizer Oversample Mode=0, Line Rasterization=0, Enable Depth Offset=0, Clockwise Primitives=1, Enable Reverse Facing Primitive=1, Enable Forward Facing Primitive=0
+  0221F122  Zero All Flat Shade Flags
+  0221F123  Zero All Centroid Flags
+  0221F124  Zero All Non-perspective Flags
+  0221F125  Sample State: Coverage=0x3f80, Mask=0xf
+ tile block 5:
+  0221F140  NOP
+  0221F141  Halt
+ tile block 6:
+  0221F180  Prim List Format: tri strip or fan=0, primitive type=2
+  0221F182  VCM Cache Size: Number of 16-vertex batches for rendering=4, Number of 16-vertex batches for binning=4
+  0221F184  GL Shader State: address=0x5728120, number of attribute arrays=2
+  0221F189  Blend Enables: Mask=0xf
+  0221F18B  Blend Cfg: Render Target Mask=0xf, Color blend dst factor=7, Color blend src factor=6, Color blend mode=0, Alpha blend dst factor=7, Alpha blend src factor=6, Alpha blend mode=0
+  0221F190  Blend Constant Color: Alpha (F16)=0, Blue (F16)=0, Green (F16)=0, Red (F16)=0
+  0221F199  Color Write Masks: Mask=0
+  0221F19E  Cfg Bits: Direct3D Provoking Vertex=0, Direct3D 'Point-fill' mode=0, Blend enable=1, Stencil enable=0, Early Z updates enable=1, Early Z enable=0, Z updates enable=0, Depth-Test Function=7, Direct3D Wireframe triangles mode=0, Rasterizer Oversample Mode=0, Line Rasterization=0, Enable Depth Offset=0, Clockwise Primitives=1, Enable Reverse Facing Primitive=1, Enable Forward Facing Primitive=0
+  0221F1A2  Zero All Flat Shade Flags
+  0221F1A3  Zero All Centroid Flags
+  0221F1A4  Zero All Non-perspective Flags
+  0221F1A5  Sample State: Coverage=0x3f80, Mask=0xf
+ tile block 7:
+  0221F1C0  NOP
+  0221F1C1  Halt
+ tile block 8:
+  0221F200  Prim List Format: tri strip or fan=0, primitive type=2
+  0221F202  VCM Cache Size: Number of 16-vertex batches for rendering=4, Number of 16-vertex batches for binning=4
+  0221F204  GL Shader State: address=0x5728120, number of attribute arrays=2
+  0221F209  Blend Enables: Mask=0xf
+  0221F20B  Blend Cfg: Render Target Mask=0xf, Color blend dst factor=7, Color blend src factor=6, Color blend mode=0, Alpha blend dst factor=7, Alpha blend src factor=6, Alpha blend mode=0
+  0221F210  Blend Constant Color: Alpha (F16)=0, Blue (F16)=0, Green (F16)=0, Red (F16)=0
+  0221F219  Color Write Masks: Mask=0
+  0221F21E  Cfg Bits: Direct3D Provoking Vertex=0, Direct3D 'Point-fill' mode=0, Blend enable=1, Stencil enable=0, Early Z updates enable=1, Early Z enable=0, Z updates enable=0, Depth-Test Function=7, Direct3D Wireframe triangles mode=0, Rasterizer Oversample Mode=0, Line Rasterization=0, Enable Depth Offset=0, Clockwise Primitives=1, Enable Reverse Facing Primitive=1, Enable Forward Facing Primitive=0
+  0221F222  Zero All Flat Shade Flags
+  0221F223  Zero All Centroid Flags
+  0221F224  Zero All Non-perspective Flags
+  0221F225  Sample State: Coverage=0x3f80, Mask=0xf
+ tile block 9:
+  0221F240  NOP
+  0221F241  Halt
+ tile block 10:
+  0221F280  Prim List Format: tri strip or fan=0, primitive type=2
+  0221F282  VCM Cache Size: Number of 16-vertex batches for rendering=4, Number of 16-vertex batches for binning=4
+  0221F284  GL Shader State: address=0x5728120, number of attribute arrays=2
+  0221F289  Blend Enables: Mask=0xf
+  0221F28B  Blend Cfg: Render Target Mask=0xf, Color blend dst factor=7, Color blend src factor=6, Color blend mode=0, Alpha blend dst factor=7, Alpha blend src factor=6, Alpha blend mode=0
+  0221F290  Blend Constant Color: Alpha (F16)=0, Blue (F16)=0, Green (F16)=0, Red (F16)=0
+  0221F299  Color Write Masks: Mask=0
+  0221F29E  Cfg Bits: Direct3D Provoking Vertex=0, Direct3D 'Point-fill' mode=0, Blend enable=1, Stencil enable=0, Early Z updates enable=1, Early Z enable=0, Z updates enable=0, Depth-Test Function=7, Direct3D Wireframe triangles mode=0, Rasterizer Oversample Mode=0, Line Rasterization=0, Enable Depth Offset=0, Clockwise Primitives=1, Enable Reverse Facing Primitive=1, Enable Forward Facing Primitive=0
+  0221F2A2  Zero All Flat Shade Flags
+  0221F2A3  Zero All Centroid Flags
+  0221F2A4  Zero All Non-perspective Flags
+  0221F2A5  Sample State: Coverage=0x3f80, Mask=0xf
+ tile block 11:
+  0221F2C0  NOP
+  0221F2C1  Halt
+ tile block 12:
+  0221F300  Prim List Format: tri strip or fan=0, primitive type=2
+  0221F302  VCM Cache Size: Number of 16-vertex batches for rendering=4, Number of 16-vertex batches for binning=4
+  0221F304  GL Shader State: address=0x5728120, number of attribute arrays=2
+  0221F309  Blend Enables: Mask=0xf
+  0221F30B  Blend Cfg: Render Target Mask=0xf, Color blend dst factor=7, Color blend src factor=6, Color blend mode=0, Alpha blend dst factor=7, Alpha blend src factor=6, Alpha blend mode=0
+  0221F310  Blend Constant Color: Alpha (F16)=0, Blue (F16)=0, Green (F16)=0, Red (F16)=0
+  0221F319  Color Write Masks: Mask=0
+  0221F31E  Cfg Bits: Direct3D Provoking Vertex=0, Direct3D 'Point-fill' mode=0, Blend enable=1, Stencil enable=0, Early Z updates enable=1, Early Z enable=0, Z updates enable=0, Depth-Test Function=7, Direct3D Wireframe triangles mode=0, Rasterizer Oversample Mode=0, Line Rasterization=0, Enable Depth Offset=0, Clockwise Primitives=1, Enable Reverse Facing Primitive=1, Enable Forward Facing Primitive=0
+  0221F322  Zero All Flat Shade Flags
+  0221F323  Zero All Centroid Flags
+  0221F324  Zero All Non-perspective Flags
+  0221F325  Sample State: Coverage=0x3f80, Mask=0xf
+ tile block 13:
+  0221F340  NOP
+  0221F341  Halt
+ tile block 14:
+  0221F380  Prim List Format: tri strip or fan=0, primitive type=2
+  0221F382  VCM Cache Size: Number of 16-vertex batches for rendering=4, Number of 16-vertex batches for binning=4
+  0221F384  GL Shader State: address=0x5728120, number of attribute arrays=2
+  0221F389  Blend Enables: Mask=0xf
+  0221F38B  Blend Cfg: Render Target Mask=0xf, Color blend dst factor=7, Color blend src factor=6, Color blend mode=0, Alpha blend dst factor=7, Alpha blend src factor=6, Alpha blend mode=0
+  0221F390  Blend Constant Color: Alpha (F16)=0, Blue (F16)=0, Green (F16)=0, Red (F16)=0
+  0221F399  Color Write Masks: Mask=0
+  0221F39E  Cfg Bits: Direct3D Provoking Vertex=0, Direct3D 'Point-fill' mode=0, Blend enable=1, Stencil enable=0, Early Z updates enable=1, Early Z enable=0, Z updates enable=0, Depth-Test Function=7, Direct3D Wireframe triangles mode=0, Rasterizer Oversample Mode=0, Line Rasterization=0, Enable Depth Offset=0, Clockwise Primitives=1, Enable Reverse Facing Primitive=1, Enable Forward Facing Primitive=0
+  0221F3A2  Zero All Flat Shade Flags
+  0221F3A3  Zero All Centroid Flags
+  0221F3A4  Zero All Non-perspective Flags
+  0221F3A5  Sample State: Coverage=0x3f80, Mask=0xf
+ tile block 15:
+  0221F3C0  NOP
+  0221F3C1  Halt

@@ -1,0 +1,115 @@
+diff --git a/core/v3d.h b/core/v3d.h
+index cbd884e..eeb0895 100644
+--- a/core/v3d.h
++++ b/core/v3d.h
+@@ -57,9 +57,9 @@ enum v3d_bank { V3D_BANK_HUB, V3D_BANK_CORE0, V3D_BANK_SMS, V3D_BANK_BRIDGE, V3D
+ 
+ /* Sizes (fixed tables: nothing is allocated with interrupts off) */
+ #define V3D_MAX_FILES 32
+-#define V3D_MAX_HANDLES 4096		/* per file */
++#define V3D_MAX_HANDLES 16384	/* riscos-doom3 test: was 4096 */		/* per file */
+ #define V3D_MAX_SYNCOBJS 256		/* per file */
+-#define V3D_MAX_BOS 8192
++#define V3D_MAX_BOS 16384	/* riscos-doom3 test: was 8192 */
+ #define V3D_MAX_JOBS 256
+ #define V3D_MAX_JOB_BOS 4096
+ #define V3D_MAX_SYNC_FILES 256
+diff --git a/core/v3d_bo.c b/core/v3d_bo.c
+index d355673..bf3a581 100644
+--- a/core/v3d_bo.c
++++ b/core/v3d_bo.c
+@@ -150,11 +150,18 @@ v3d_bo_create_cached (struct v3d_dev *v3d, uint32_t bytes, int cached, int *bo_o
+   if (at && at + n <= v3d->area_pages && range_free (v3d, at, n))
+     first = at;				/* (0.13) the replay's address */
+   else if (bo == V3D_MAX_BOS || !find_pages_aligned (v3d, n, &first))
+-    return -V3D_ENOMEM;
++    {
++      plat_log (v3d, bo == V3D_MAX_BOS ? "BO: no BO slot left; pages" : "BO: no room in the area; pages", n);
++      return -V3D_ENOMEM;
++    }
+   if (bo == V3D_MAX_BOS)
+     return -V3D_ENOMEM;
+   if (plat_pages_claim (v3d, first, n, cached))
+-    return -V3D_ENOMEM;
++    {
++      plat_log (v3d, "BO: claim failed; pages", n);
++      plat_log (v3d, "  at area page", first);
++      return -V3D_ENOMEM;
++    }
+   mark (v3d, first, n, 1);
+   v3d->pages_used += n;
+   struct v3d_bo *b = &v3d->bos[bo];
+diff --git a/core/v3d_ioctl.c b/core/v3d_ioctl.c
+index f79bb35..459e911 100644
+--- a/core/v3d_ioctl.c
++++ b/core/v3d_ioctl.c
+@@ -156,12 +156,18 @@ create_bo (struct v3d_dev *v3d, int f, struct drm_v3d_create_bo *args)
+   for (h = 1; h < V3D_MAX_HANDLES && handles[h]; h++)
+     ;
+   if (h == V3D_MAX_HANDLES)
+-    return -V3D_ENOSPC;
++    {
++      plat_log (v3d, "CREATE_BO: no handle left; size", args->size);
++      return -V3D_ENOSPC;
++    }
+   v3d_service (v3d);
+   int bo, ret = v3d_bo_create_cached (v3d, args->size,
+ 				      (args->flags & DRM_RISCOS_BO_CPU_CACHED) != 0, &bo);
+   if (ret)
+-    return ret;
++    {
++      plat_log (v3d, "CREATE_BO failed; size", args->size);
++      return ret;
++    }
+   v3d->bos[bo].file = (int16_t) f;
+   handles[h] = (uint16_t) bo;
+   args->handle = h;
+diff --git a/riscos/header.s b/riscos/header.s
+index e463a4c..118473e 100644
+--- a/riscos/header.s
++++ b/riscos/header.s
+@@ -28,7 +28,7 @@ module_start:
+ 	.word	flags - module_start
+ 
+ title:	.asciz	"V3DRender"
+-help:	.asciz	"V3DRender\t0.16 (18 Nov 2026) Pi 4 GPU driver (V3D 4.2), after Linux's v3d"
++help:	.asciz	"V3DRender\t0.16 (22 Nov 2026) 16k+nohigh test: Pi 4 GPU driver (V3D 4.2), after Linux's v3d"
+ swi_names:
+ 	.asciz	"V3DRender\0Info\0Open\0Close\0Ioctl\0Reset\0Debug\0"
+ 	.align	2
+diff --git a/riscos/plat_pi4.c b/riscos/plat_pi4.c
+index 06c84e6..29fd2b5 100644
+--- a/riscos/plat_pi4.c
++++ b/riscos/plat_pi4.c
+@@ -492,6 +492,10 @@ pmp_pa (struct pmp *a, uint32_t page)
+ static uint32_t
+ high_run (uint32_t pages, uint32_t align_log2)
+ {
++  /* riscos-doom3 test: never claim specific pages (they may belong to imported memory,
++     which the kernel would then move under the GPU); only "any page" from the free pool */
++  (void) pages; (void) align_log2;
++  return DA_RELEASE;
+   regs r = {{ 12u | 1u << 9, pages << 12, align_log2, 0,
+ 	      HIGH_FROM, 0, 0xFFFFFFFFu, 0 }};
+   if (swix_regs (OS_Memory, &r))
+@@ -502,7 +506,6 @@ high_run (uint32_t pages, uint32_t align_log2)
+ int
+ plat_pages_claim (struct v3d_dev *v3d, uint32_t first, uint32_t n, int cached)
+ {
+-  (void) v3d;
+   uint32_t ap = PAGE_AP_USER_RW | (cached ? PAGE_CACHED_REQ : 0);
+   uint32_t done = 0, run = n, least = n < HIGH_MIN_RUN ? n : HIGH_MIN_RUN;
+   while (done < n && run >= least && run)
+@@ -530,8 +533,11 @@ plat_pages_claim (struct v3d_dev *v3d, uint32_t first, uint32_t n, int cached)
+     }
+   if (done < n)
+     {
+-      if (pmp_claim_map (&pi4.bo, first + done, n - done, DA_RELEASE, ap))
++      oserror *fe = pmp_claim_map (&pi4.bo, first + done, n - done, DA_RELEASE, ap);
++      if (fe)
+ 	{
++	  plat_log (v3d, "claim any failed: OS error", fe->errnum);
++	  plat_log (v3d, "  pages wanted (any)", n - done);
+ 	  if (done)
+ 	    pmp_unmap_release (&pi4.bo, first, done);
+ 	  return -1;

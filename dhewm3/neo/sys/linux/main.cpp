@@ -432,7 +432,47 @@ void idSysLocal::OpenURL( const char *url, bool quit ) {
 main
 ===============
 */
+#ifdef __riscos__
+/* RISC OS port: a sampling profiler. dhewm3$Prof = seconds to wait before sampling; then the
+   main thread's PC and LR, as UnixLib saved them when it last switched threads (the ticker
+   preempts it), are taken every 10 ms, and written to <dhewm3$Dir>.prof after RISCOS_PROF_N
+   samples. UnixLib's struct __pthread_thread starts with a pointer to the saved registers. */
+#include <pthread.h>
+#define RISCOS_PROF_N 4000
+static pthread_t riscos_prof_main;
+static unsigned riscos_prof_samples[RISCOS_PROF_N][2];
+static void *riscos_prof_thread( void *arg ) {
+	int delay = (int)(intptr_t)arg;
+	sleep( delay );
+	for ( int i = 0; i < RISCOS_PROF_N; i++ ) {
+		usleep( 10000 );
+		const unsigned *regs = *(const unsigned * const *)riscos_prof_main;
+		riscos_prof_samples[i][0] = regs[15];
+		riscos_prof_samples[i][1] = regs[14];
+	}
+	FILE *f = fopen( "/<dhewm3$Dir>/prof", "wb" );
+	if ( f ) {
+		fwrite( riscos_prof_samples, sizeof riscos_prof_samples, 1, f );
+		fclose( f );
+	}
+	fprintf( stderr, "profile: %d samples written\n", RISCOS_PROF_N );
+	return NULL;
+}
+static void riscos_prof_start( void ) {
+	const char *v = getenv( "dhewm3$Prof" );
+	if ( !v || !*v ) {
+		return;
+	}
+	riscos_prof_main = pthread_self();
+	pthread_t t;
+	pthread_create( &t, NULL, riscos_prof_thread, (void *)(intptr_t)atoi( v ) );
+}
+#endif
+
 int main(int argc, char **argv) {
+#ifdef __riscos__
+	riscos_prof_start();
+#endif
 	// Prevent running Doom 3 as root
 	// Borrowed from Yamagi Quake II
 	if (getuid() == 0) {
