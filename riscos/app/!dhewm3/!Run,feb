@@ -11,4 +11,4 @@ RMEnsure ARMEABISupport 1.03 Error dhewm3 needs ARMEABISupport 1.03 or later (fr
 RMEnsure RISC3D 0.05 Error dhewm3 needs !RISC3D (RISC3D 0.05 or later) in !Boot.Resources, to draw with the GPU
 
 WimpSlot -min 6144K -max 6144K
-Run <dhewm3$Dir>.!RunImage %*0 2>/<dhewm3$Dir>/launcherlog
+Run <dhewm3$Dir>.!RunImage %*0

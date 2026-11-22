@@ -1,0 +1,41 @@
+V3D 4.2 rev 14, HUB_IDENT1 &000E1124 (already running at load)
+Clock (MHz):           500
+ARM clock (MHz):       1500 (the firmware's most: 1500)
+Buffer memory (KB):    262144
+  in use (KB):         128972
+  above 1 GB (KB):     128972
+  below 1 GB (KB):     0
+  in 1 MB entries (KB):1024
+  in 64 KB entries (KB):1920
+Page table at:         &40000000 (above 1 GB)
+Files open:            1
+Bin jobs:              12249
+Render jobs:           12249
+TFU jobs:              0
+Compute jobs:          0
+GPU time (ms):         bin 5120, render 76571, TFU 0, compute 0
+Interrupts:            26919
+  with nothing to do:  0
+Binner overflows:      2424
+  with no memory left: 0
+Timeouts:              2
+Resets:                2
+  jobs run again after:0
+Cache maintenance:     6166 cleans, 5566 invalidates (2 put off), 2050 ms; whole cache 11733 times (from 1024 KB)
+MMU errors:            0
+First hang: render job, list &05729000 to &057291ED
+  CT0 CS &00000000 CA &05675108 EA &05675108 RA &00000000
+  CT1 CS &00000118 CA &057286EF EA &057291ED RA &0572915C
+  PCS &00000004 BFC &000000A6 RFC &000000A5 ERR_STAT &00001000
+  FDBGO &00000000 FDBGB &00000000 FDBGR &00000000 FDBGS &00000047
+  BPCA &02226000 BPCS &0000B000 BPOA &00000000 BPOS &00000000
+  at &057286DC: &FF000000 &FF000000 &FF000000 &FF000000 &FF000000 &FF000000 &FF000000 &FF000000
+Last hang: render job, list &05789000 to &057891ED
+  CT0 CS &00000000 CA &05728108 EA &05728108 RA &00000000
+  CT1 CS &00000118 CA &057886EF EA &057891ED RA &05789111
+  PCS &00000004 BFC &00000001 RFC &00000000 ERR_STAT &00001000
+  FDBGO &00000000 FDBGB &00000000 FDBGR &00000000 FDBGS &00000047
+  BPCA &02226000 BPCS &0000B000 BPOA &00000000 BPOS &00000000
+  at &057886DC: &FF000000 &FF000000 &FF000000 &FF000000 &FF000000 &FF000000 &FF000000 &FF000000
+Log: Resetting GPU for hang. V3D_ERR_STAT: &00001000
+Log: Resetting GPU for hang. V3D_ERR_STAT: &00001000

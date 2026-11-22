@@ -11,10 +11,12 @@ RMEnsure SharedSoundBuffer 0.07 IfThere System:Modules.SSBuffer Then RMLoad Syst
 RMEnsure DigitalRenderer 0.55 IfThere System:Modules.DRenderer Then RMLoad System:Modules.DRenderer
 
 | Settings and saves in !dhewm3.home for now
-Set XDG_DATA_HOME ./home
-Set XDG_CONFIG_HOME ./home
+| (absolute: RISC OS has one current directory for the whole machine, and another program may
+| change it while the game runs. "|<" keeps the variable unexpanded; UnixLib expands it.)
+Set XDG_DATA_HOME /|<dhewm3$Dir>/home
+Set XDG_CONFIG_HOME /|<dhewm3$Dir>/home
 
 | The heap is a dynamic area, so the slot only holds the program.
 WimpSlot -min 64000K -max 64000K
 Dir <dhewm3$Dir>
-Run <dhewm3$Dir>.dhewm3 +set fs_basepath . +set r_fullscreen 0 +set r_mode -1 +set r_customWidth 800 +set r_customHeight 600 %*0 >/<dhewm3$Dir>/stdout 2>/<dhewm3$Dir>/stderr
+Run <dhewm3$Dir>.dhewm3 +set fs_basepath /<dhewm3$Dir> +set r_fullscreen 0 +set r_mode -1 +set r_customWidth 800 +set r_customHeight 600 %*0 >/<dhewm3$Dir>/stdout 2>/<dhewm3$Dir>/stderr

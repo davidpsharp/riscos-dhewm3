@@ -151,3 +151,25 @@ Outputs kept in `build/d3gltest/*.out`.
   way round). `GL_ATI_separate_stencil` with the same geometry passes, as do both on RoMac.
 - Likely in Mesa's handling of `glActiveStencilFaceEXT` for v3d, or the winding it assumes.
   dhewm3 uses glStencilOpSeparate (GL 2.0) when it has it, so it may not matter to the game.
+
+### 7. V3DRender: 4,096 buffer handles per file (8,192 in all) are too few for Doom 3
+- **Seen:** pi4-plato, dhewm3 loading demo_mars_city1 at Medium quality with the bottomup test
+  build: CREATE_BO fails 3 times at the end of the level load (the textures' upload), and
+  nothing in V3DRender's own failure paths logs it. Mesa then crashes (see item 2's last
+  point). At Ultra the failures run to over 1,000.
+- **Cause:** `create_bo` (core/v3d_ioctl.c) returns -ENOSPC when a file's `V3D_MAX_HANDLES`
+  (4096) handles are in use; `V3D_MAX_BOS` is 8192 for the whole GPU. Doom 3 makes a buffer for
+  every texture and vertex buffer. Linux's limits are far higher.
+- **Tested fix:** both raised to 16384 (`tests/v3drender/bottomup-16k-log.patch`, which also
+  logs every CREATE_BO failure in `*V3DRender`): no more failures; the level loads.
+- **Suggestion:** raise both, or grow the tables, and put a CREATE_BO failure in the log.
+
+### 8. V3DRender/Mesa v3d: GPU hangs while dhewm3 loads a level; afterwards nothing reaches the window
+- **Seen:** the same run as item 7, after the 16k fix. Two render jobs hang
+  (`V3D_ERR_STAT &00001000`; V3DRender resets the GPU each time). The game then plays (about 60
+  render jobs a second, the mouse captured) but the window keeps showing the loading screen.
+- **Evidence:** `tests/v3drender/logs/2026-11-22-mars-city1-medium-16k.txt` (`*V3DRender`, with
+  the first and last hang's registers), and the game's stdout beside it.
+- Not yet known whether the window's imported memory is lost at the reset, or whether frames
+  after it go elsewhere. `*V3DDump` of the hang would show the control list.
+

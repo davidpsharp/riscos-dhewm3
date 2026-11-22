@@ -1,0 +1,336 @@
+Posix_InitTime(): A call to Sys_MillisecondsPrecise() takes about 1155 nsec; 1mio pause loops took 2.668 ms => pauseLoopsPer5usec = 1874
+dhewm3 1.5.5.1305 riscos-arm Nov 22 2026 11:39:00 using SDL v2.32.10
+SDL video driver: riscos
+Logging console output to /<dhewm3$Dir>/home/dhewm3/dhewm3log.txt
+terminal support enabled ( use +set in_tty 0 to disable )
+pid: 134720317
+3968 MB System Memory
+InitNetworking: no interface list on RISC OS
+----- Initializing File System -----
+Current search path:
+/<dhewm3$Dir>/home/dhewm3/base
+/<dhewm3$Dir>/base
+Addon pk4s:
+WARNING: Couldn't find default.cfg in base/, trying again with demo/
+
+----- Initializing File System -----
+Loaded pk4 /<dhewm3$Dir>/demo/demo00.pk4 with checksum 0xfe75bbef
+Current search path:
+/<dhewm3$Dir>/home/dhewm3/demo
+/<dhewm3$Dir>/demo
+/<dhewm3$Dir>/demo/demo00.pk4 (12234 files)
+/<dhewm3$Dir>/home/dhewm3/base
+/<dhewm3$Dir>/base
+Addon pk4s:
+----- Initializing Decls -----
+5151 strings read from strings/english.lang
+Couldn't open journal files
+couldn't exec editor.cfg
+execing default.cfg
+execing dhewm.cfg
+execing autoexec.cfg
+5151 strings read from strings/english.lang
+----- Initializing OpenAL -----
+Setup OpenAL device and context
+OpenAL: found device 'Default Device'
+OpenAL: found device '/dev/dsp'
+OpenAL: found extension for HRTF
+OpenAL: found extensions for resetting disconnected devices
+OpenAL: found extension to control output-limiter
+OpenAL vendor: OpenAL Community
+OpenAL renderer: OpenAL Soft
+OpenAL version: 1.1 ALSOFT 1.19.1
+OpenAL: found EFX extension
+OpenAL: found 256 hardware voices
+----- Initializing OpenGL -----
+Initializing OpenGL subsystem
+Will create a window with resolution 800x600 (r_mode = -1)
+SDL detected 1 displays: 
+ 0: 1680x1050 at (0, 0) to (1680, 1050)
+Will use display 0 because mouse cursor is at (0, 0).
+Got a window with resolution 800 x 600
+Requested 8 color bits per chan, 8 alpha 24 depth, 8 stencil and no MSAA
+Got 8 stencil bits, 24 depth bits, color bits: r8 g8 b8 a8 and no MSAA
+Initializing ImGui
+Detected keyboard layout as "english"
+OpenGL vendor: Broadcom
+OpenGL renderer: V3D 4.2.14.0
+OpenGL version: 2.1 Mesa 26.1.6
+...using GL_ARB_multitexture
+...using GL_ARB_texture_env_combine
+...using GL_ARB_texture_cube_map
+...using GL_ARB_texture_env_dot3
+...using GL_ARB_texture_env_add
+...using GL_ARB_texture_non_power_of_two
+...using GL_ARB_texture_compression
+...using GL_EXT_texture_compression_s3tc
+X..GL_ARB_texture_compression_bptc not found
+...using GL_EXT_texture_filter_anisotropic
+   maxTextureAnisotropy: 16
+...using GL_1.4_texture_lod_bias
+X..GL_EXT_shared_texture_palette not found
+...using GL_EXT_texture3D
+...using GL_EXT_stencil_wrap
+...using GL_EXT_stencil_two_side
+...got GL2.0+ glStencilOpSeparate()
+...using GL_ARB_vertex_buffer_object
+...using GL_ARB_vertex_program
+...using GL_ARB_fragment_program
+X..EXT_depth_bounds_test not found
+...found GL_ARB_debug_output, but not using it (r_glDebugContext is not set)
+ARB2 renderer: Available.
+----- R_ReloadARBPrograms -----
+glprogs/test.vfp
+glprogs/test.vfp
+glprogs/interaction.vfp
+glprogs/interaction.vfp
+glprogs/bumpyEnvironment.vfp
+glprogs/bumpyEnvironment.vfp
+glprogs/ambientLight.vfp
+glprogs/ambientLight.vfp
+glprogs/shadow.vp
+glprogs/environment.vfp
+glprogs/environment.vfp
+glprogs/arbVP_glasswarp.txt: File not found
+glprogs/arbFP_glasswarp.txt: File not found
+<internal> soft_particle.vfp
+<internal> soft_particle.vfp
+using ARB_vertex_buffer_object memory
+using ARB2 renderSystem
+Will apply r_gamma and r_brightness in shaders (r_gammaInShader 1)
+----- Initializing Game -----
+gamename: baseDOOM-1
+gamedate: Nov 22 2026
+Initializing event system
+...473 event definitions
+Initializing class hierarchy
+...142 classes, 382184 bytes for event callbacks
+Initializing scripts
+Compiled 'script/doom_main.script': 1988 ms
+----- Compile stats -----
+Memory usage:
+     Strings: 79, 9648 bytes
+  Statements: 67783, 1355660 bytes
+   Functions: 2108, 250452 bytes
+   Variables: 147320 bytes
+    Mem used: 2573396 bytes
+ Static data: 2477552 bytes
+   Allocated: 3480492 bytes
+ Thread size: 13212 bytes
+...6 aas types
+----- Initializing Session -----
+WARNING: Couldn't load gui: 'guis/mainmenu.gui'
+----- Warnings -----
+during dhewm 3 initialization...
+WARNING: Couldn't find default.cfg in base/, trying again with demo/
+
+WARNING: Couldn't load gui: 'guis/mainmenu.gui'
+2 warnings
+in_grabKeyboard: Will *not* grab the keyboard if mouse is grabbed, so global keyboard-shortcuts (like Alt-Tab) will still work
+----- Game Map Shutdown -----
+reloading guis/demo_mainmenu.gui.
+reloading guis/restart.gui.
+reloading guis/gameover.gui.
+reloading guis/msg.gui.
+reloading guis/takeNotes.gui.
+reloading guis/intro.gui.
+----- Map Initialization -----
+Map: game/demo_mars_city1
+glprogs/heatHaze.vfp
+glprogs/heatHaze.vfp
+glprogs/heatHazeWithMask.vfp
+glprogs/heatHazeWithMask.vfp
+----- Game Map Init -----
+collision data:
+   421 models
+ 30823 vertices (722 KB)
+ 54551 edges (1917 KB)
+ 22257 polygons (1564 KB)
+  4068 brushes (556 KB)
+ 12449 nodes (340 KB)
+ 43444 polygon refs (339 KB)
+ 14219 brush refs (111 KB)
+ 18352 internal edges
+  1461 sharp edges
+     0 contained polygons removed
+     0 polygons merged
+  5551 KB total memory used
+503 msec to load collision data.
+map bounds are (19640.0, 22168.0, 29496.0)
+max clip sector is (1227.5, 1385.5, 1843.5)
+    2 KB passage memory used to build PVS
+    1 msec to calculate PVS
+   56 areas
+  110 portals
+    9 areas visible on average
+  448 bytes PVS data
+[Load AAS]
+loading maps/game/demo_mars_city1.aas48
+done.
+[Load AAS]
+loading maps/game/demo_mars_city1.aas96
+[Load AAS]
+loading maps/game/demo_mars_city1.aas_guardian
+[Load AAS]
+loading maps/game/demo_mars_city1.aas_mancubus
+[Load AAS]
+loading maps/game/demo_mars_city1.aas_sabaoth
+[Load AAS]
+loading maps/game/demo_mars_city1.aas_cyberdemon
+Entering doom_main()
+Exiting doom_main()
+Spawning entities
+loaded collision model models/mapobjects/com/platguistand/mc_platguistand.lwo
+WARNING: marscity_cinematic_sarge_1 has no AAS file
+WARNING: marscity_cinematic_sarge2_1 has no AAS file
+loaded collision model models/mapobjects/filler/burgerboxopen.lwo
+glprogs/heatHazeWithMaskAndVertex.vfp
+glprogs/heatHazeWithMaskAndVertex.vfp
+WARNING: file def/weapon_bfg.def, line 92: Unknown entityDef 'damage_bfg' inherited by 'damage_bfg_cinematic'
+WARNING: file def/weapon_bfg.def, line 97: Unknown entityDef 'damage_bfgFreq' inherited by 'damage_bfgfreq_cinematic'
+WARNING: file def/weapon_bfg.def, line 102: Unknown entityDef 'damage_bfgSplash' inherited by 'damage_bfgsplash_cinematic'
+loaded collision model models/mapobjects/lab/diamondbox/diamondbox_sm.lwo
+loaded collision model models/mapobjects/com/modconsole1.lwo
+loaded collision model models/mapobjects/filler/burgereat.lwo
+loaded collision model models/mapobjects/filler/burgerboxclose.lwo
+WARNING: Unknown classname 'weapon_plasmagun' on 'weapon_plasmagun_1'.
+loaded collision model models/mapobjects/filler/mkeyboard.lwo
+loaded collision model models/mapobjects/lights/florescent_bulbflare.ASE
+loaded collision model models/mapobjects/base/misc/emerlight.ase
+loaded collision model models/mapobjects/monitors/controlmonitor.lwo
+loaded collision model models/mapobjects/doors/mcitydoor2l.lwo
+loaded collision model models/mapobjects/doors/mcitydoor2r.lwo
+loaded collision model models/mapobjects/doors/mcdoor2frame.lwo
+loaded collision model models/mapobjects/tables/conf_table/conf_table.lwo
+loaded collision model models/mapobjects/filler/cola1.lwo
+loaded collision model models/mapobjects/filler/foamcup.lwo
+loaded collision model models/mapobjects/signs/marquee/marquee.lwo
+loaded collision model models/mapobjects/doors/mcitydoorframe.lwo
+loaded collision model models/mapobjects/doors/mcitydoorframegui.lwo
+loaded collision model models/items/keycard/keycard3.lwo
+loaded collision model models/mapobjects/doors/mcitydoor.lwo
+loaded collision model models/mapobjects/cpu/pullhandle.lwo
+loaded collision model models/mapobjects/doors/delelev/delelevlf.lwo
+loaded collision model models/mapobjects/guiobjects/techdrpanel1/techdrpanel1.lwo
+loaded collision model models/mapobjects/doors/delelev/delelevrt.lwo
+loaded collision model models/mapobjects/cpu/heater.lwo
+loaded collision model models/mapobjects/cpu/heater2.lwo
+loaded collision model models/mapobjects/cpu/comrack2.lwo
+loaded collision model models/mapobjects/lab/sink2/sink2.lwo
+loaded collision model models/mapobjects/filler/sodamachine.lwo
+loaded collision model models/mapobjects/filler/binder1.ase
+loaded collision model models/mapobjects/lab/bubbler2/bubbler2.lwo
+loaded collision model models/mapobjects/filler/tbox7.ase
+loaded collision model models/mapobjects/filler/binder3.ase
+loaded collision model models/mapobjects/chairs/modchair/modtable.lwo
+loaded collision model models/mapobjects/chairs/modchair/modseat.lwo
+loaded collision model models/mapobjects/chairs/modchair/modarm.lwo
+removed 2 degenerate triangles
+loaded collision model models/mapobjects/lab/newfridge/newfridge.lwo
+loaded collision model models/mapobjects/filler/paper1.ase
+loaded collision model models/mapobjects/filler/tbox6.ase
+loaded collision model models/mapobjects/filler/tbox_open.ase
+loaded collision model models/mapobjects/filler/toolchest.lwo
+loaded collision model models/mapobjects/doors/deldoor1/deldoor1frm.lwo
+loaded collision model models/mapobjects/doors/deldoor1/deldoor1.lwo
+loaded collision model models/mapobjects/com/modconsole2.lwo
+loaded collision model models/mapobjects/com/modconsole5.lwo
+loaded collision model models/mapobjects/cpu/cpumaze1.lwo
+loaded collision model models/mapobjects/doors/deldoor1/deldoor1win.lwo
+loaded collision model models/mapobjects/com/modconsole4.lwo
+loaded collision model models/mapobjects/lab/gizmo2/gizmo2.lwo
+loaded collision model models/mapobjects/lab/autable/autable.lwo
+loaded collision model models/mapobjects/lab/roboarm1/roboarm1.lwo
+loaded collision model models/mapobjects/utility/tecknob2/tecknob2.lwo
+loaded collision model models/mapobjects/cpu/comrack.lwo
+loaded collision model models/mapobjects/tables/gendesk/gendesk2.lwo
+loaded collision model models/mapobjects/filler/tbox2.ase
+loaded collision model models/mapobjects/cpu/serverplate.lwo
+loaded collision model models/mapobjects/filler/snackmachine.lwo
+loaded collision model models/mapobjects/filler/tbox1.ase
+loaded collision model models/mapobjects/washroom/clamp.ase
+loaded collision model models/mapobjects/washroom/urinal2.ase
+loaded collision model models/mapobjects/washroom/dryer.ase
+loaded collision model models/mapobjects/washroom/bsink.ase
+loaded collision model models/mapobjects/washroom/soap.ase
+loaded collision model models/mapobjects/washroom/toilet.ase
+loaded collision model models/mapobjects/washroom/tp.ase
+loaded collision model models/mapobjects/arcade_machine/arcade_machine.lwo
+loaded collision model models/mapobjects/mcity/deskcomp/deskcomp.lwo
+loaded collision model models/mapobjects/skmachines/skoverhang.lwo
+loaded collision model models/mapobjects/shipping_crates/shipping_crates.lwo
+loaded collision model models/mapobjects/skmachines/skcube.lwo
+loaded collision model models/mapobjects/doors/accesshatch/accesshatch.lwo
+loaded collision model models/mapobjects/doors/accesshatch/accesshatchdoor.lwo
+loaded collision model models/mapobjects/elevators/elevator.lwo
+loaded collision model models/mapobjects/swinglights/swinglight1b.lwo
+loaded collision model models/mapobjects/swinglights/swinglight_long_wbulbs_bulb_broken.ase
+loaded collision model models/mapobjects/filler/keyboard1.ase
+loaded collision model models/mapobjects/storagecab/gunrack/gunrackcomp.lwo
+loaded collision model models/mapobjects/chairs/modchair/modcorner.lwo
+loaded collision model models/mapobjects/shutter/shutter_small.lwo
+loaded collision model models/mapobjects/mcity/outside/mc_outside.lwo
+loaded collision model models/mapobjects/turrets/ceilingturret1b.lwo
+loaded collision model models/mapobjects/mcity/outside/mc_outside2.lwo
+loaded collision model models/mapobjects/kiosk/infokiosk2.lwo
+loaded collision model models/mapobjects/lab/loadingplatform/loadingplatform.lwo
+loaded collision model models/mapobjects/deltakiosk/deltakiosk.lwo
+WARNING: marscity_cinematic_player_sarge has no AAS file
+loaded collision model models/mapobjects/hangar/hangar1b.lwo
+loaded collision model models/mapobjects/doors/jumbodoor/jumbodoorfrm.lwo
+loaded collision model models/mapobjects/hangar/hangar1tower.lwo
+loaded collision model models/mapobjects/hangar/rails3.lwo
+loaded collision model models/mapobjects/hangar/rails2.lwo
+loaded collision model models/mapobjects/hangar/rails1.lwo
+loaded collision model models/mapobjects/hangar/rails4.lwo
+loaded collision model models/mapobjects/hangar/rails5.lwo
+loaded collision model models/mapobjects/hangar/pillar1.lwo
+loaded collision model models/mapobjects/hangar/rails6.lwo
+loaded collision model models/mapobjects/hangar/marquee.lwo
+loaded collision model models/mapobjects/hangar/hangarlamp1.lwo
+loaded collision model models/mapobjects/mcity/bioscanner/bioscannereye.lwo
+loaded collision model models/mapobjects/tables/gendesk/gendesk1.lwo
+loaded collision model models/mapobjects/hangar/hangar2tower.lwo
+loaded collision model models/mapobjects/monitors/hangingmonitor.lwo
+loaded collision model models/mapobjects/signs/ceilingsign/ceilingsign.lwo
+loaded collision model models/mapobjects/elevators/elevator_door.lwo
+loaded collision model models/mapobjects/com/platguistand/platguistand.lwo
+loaded collision model models/mapobjects/guiobjects/flatmonitor/flatmonitor.lwo
+loaded collision model models/mapobjects/mcity/bioscanner/bioscanbeam.lwo
+loaded collision model models/mapobjects/mcity/bioscanner/bioscanner.lwo
+loaded collision model models/mapobjects/doors/mcitydoor_glass.lwo
+loaded collision model models/mapobjects/lab/fridge1/fridge1_delta2b.lwo
+WARNING: Couldn't load sound 'guisounds.wav' using default
+loaded collision model models/mapobjects/turrets/ceilingturret1a.lwo
+...1969 entities spawned, 0 inhibited
+
+==== Processing events ====
+SpawnPlayer: 0
+loaded collision model models/weapons/shell1/mshell_lo.lwo
+loaded collision model models/weapons/shell1/sshell_bigger.lwo
+----- idRenderModelManagerLocal::EndLevelLoad -----
+    0 models purged from previous level,   991 models kept.
+----- idImageManager::EndLevelLoad -----
+    0 purged from previous
+  155 kept from previous
+ 1957 new loaded
+all images loaded in  37.6 seconds
+----- idSoundCache::EndLevelLoad -----
+13353k referenced
+  192k purged
+sound: missing efxs/demo_mars_city1.efx
+ 83301 msec to load game/demo_mars_city1
+idRenderWorld::GenerateAllInteractions, msec = 35, staticAllocCount = 0.
+interactionTable size: 2819964 bytes
+29864 interaction take 3344768 bytes
+----- Warnings -----
+during game/demo_mars_city1...
+WARNING: Couldn't load sound 'guisounds.wav' using default
+WARNING: file def/weapon_bfg.def, line 102: Unknown entityDef 'damage_bfgSplash' inherited by 'damage_bfgsplash_cinematic'
+WARNING: file def/weapon_bfg.def, line 92: Unknown entityDef 'damage_bfg' inherited by 'damage_bfg_cinematic'
+WARNING: file def/weapon_bfg.def, line 97: Unknown entityDef 'damage_bfgFreq' inherited by 'damage_bfgfreq_cinematic'
+WARNING: Unknown classname 'weapon_plasmagun' on 'weapon_plasmagun_1'.
+5 warnings
+WARNING: Unknown string id #str_07186
+WARNING: Unknown string id #str_07186
+WARNING: Unknown string id #str_07212

@@ -1459,8 +1459,39 @@ void Poll_Loop(void)
 
 }	// namespace
 
+// Another "dhewm3 launcher" task already running? (TaskManager_EnumerateTasks)
+bool Already_Running(void)
+{
+	int block[64];
+	int next = 0;
+	do {
+		_kernel_swi_regs regs;
+		regs.r[0] = next;
+		regs.r[1] = (int)block;
+		regs.r[2] = sizeof(block);
+		if (_kernel_swi(0x42681, &regs, &regs) != nullptr) {
+			return false;
+		}
+		next = regs.r[0];
+		for (int * entry = block; entry < (int *)regs.r[1]; entry += 4) {
+			char const * name = (char const *)entry[1];
+			if (strncmp(name, "dhewm3 launcher", 15) == 0 && (name[15] < 32)) {
+				return true;
+			}
+		}
+	} while (next >= 0);
+	return false;
+}
+
 int main(int argc, char ** argv)
 {
+	if (Already_Running()) {
+		return 0;	// a second double-click on !dhewm3: the first launcher is on the icon bar
+	}
+	// its log, opened here (after that check) rather than redirected by !Run, which would fail
+	// while the first launcher has it open
+	freopen("/<dhewm3$Dir>/launcherlog", "w", stderr);
+	setvbuf(stderr, nullptr, _IOLBF, 0);
 	// "-play" (from tests): start the game at once if there's data; the rest goes to the game
 	bool play = false;
 	for (int i = 1; i < argc; i++) {
