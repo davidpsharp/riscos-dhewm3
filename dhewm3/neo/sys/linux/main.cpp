@@ -76,6 +76,18 @@ If you have questions concerning this license or the applicable additional terms
 #define PATH_MAX 4096
 #endif
 
+#ifdef __riscos__
+#include <unixlib/local.h>
+// UnixLib: the heap in a dynamic area of its own (up to 1 GB; !MesaLibs' DAClamp lifts RISC
+// OS 5's 128 MB limit), so the WimpSlot only holds the program; a 4 MB stack, as Doom 3
+// uses alloca a lot; and file names left as they are (no "foo.c" to "c.foo" swapping).
+// (declared in UnixLib's features.h and unixlib/local.h; global variables aren't mangled)
+const char *const __dynamic_da_name = "dhewm3 heap";
+int __dynamic_da_max_size = 1024 * 1024 * 1024;
+int __stack_size = 4 * 1024 * 1024;
+int __riscosify_control = __RISCOSIFY_NO_SUFFIX;
+#endif
+
 static char path_argv[PATH_MAX];
 static char path_exe[PATH_MAX];
 static char save_path[PATH_MAX];

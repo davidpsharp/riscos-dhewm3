@@ -1,0 +1,14 @@
+#!/bin/sh
+# Packages the RISC OS build and puts !dhewm3 (with the demo data) on romac-doom3's disc.
+#   tools/romac-deploy        (after riscos/sdk.sh riscos/build.sh)
+set -e
+top=$(cd "$(dirname "$0")/.." && pwd)
+cd "$top"
+riscos/sdk.sh riscos/package.sh >/dev/null
+W='romac/data/hd4/Work/!dhewm3'
+mkdir -p "$W/demo"
+# the program and its files; game data, settings and logs stay
+cp -R build/riscos/app/'!dhewm3'/. "$W"/
+[ -f "$W/demo/demo00.pk4" ] || cp -c data/demo-extract/demo/demo00.pk4 "$W/demo/demo00.pk4"
+rm -f "$W/stdout" "$W/stderr"
+echo "deployed to $W"

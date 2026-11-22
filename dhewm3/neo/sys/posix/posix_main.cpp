@@ -58,6 +58,41 @@ If you have questions concerning this license or the applicable additional terms
 #include <mach/mach.h>
 #endif
 
+#ifdef __riscos__
+// UnixLib's clock_gettime counts in centiseconds. The HAL's counter 0 counts down from its
+// period to 0 once a centisecond, so the monotonic centisecond count plus how far the counter
+// has got gives microseconds (as in the ioquake3 port). Where there's no counter (OS_Hardware
+// fails), it's centiseconds.
+#include <kernel.h>
+#include <swis.h>
+static unsigned int riscos_counterRate, riscos_counterPeriod;
+static void riscos_clock_gettime( struct timespec *ts ) {
+	unsigned int cs1, cs2, count;
+	unsigned long long us;
+	if ( !riscos_counterRate ) {
+		if ( _swix( OS_Hardware, _IN(0)|_INR(8,9)|_OUT(0), 0, 0, 19, &riscos_counterRate ) ||
+		     _swix( OS_Hardware, _IN(0)|_INR(8,9)|_OUT(0), 0, 0, 20, &riscos_counterPeriod ) ||
+		     !riscos_counterRate || !riscos_counterPeriod ) {
+			riscos_counterRate = 1;
+			riscos_counterPeriod = 0;
+		}
+	}
+	do {
+		_swix( OS_ReadMonotonicTime, _OUT(0), &cs1 );
+		count = 0;
+		if ( riscos_counterPeriod )
+			_swix( OS_Hardware, _IN(0)|_INR(8,9)|_OUT(0), 0, 0, 21, &count );
+		_swix( OS_ReadMonotonicTime, _OUT(0), &cs2 );
+	} while ( cs1 != cs2 );
+	us = (unsigned long long)cs1 * 10000;
+	if ( riscos_counterPeriod && count <= riscos_counterPeriod )
+		us += (unsigned long long)( riscos_counterPeriod - count ) * 1000000 / riscos_counterRate;
+	ts->tv_sec = (time_t)( us / 1000000 );
+	ts->tv_nsec = (long)( us % 1000000 ) * 1000;
+}
+#define clock_gettime( clk, ts ) riscos_clock_gettime( ts )
+#endif
+
 #define					COMMAND_HISTORY 64
 
 static int				input_hide = 0;
@@ -294,6 +329,12 @@ Sys_DLL_Load
 TODO: OSX - use the native API instead? NSModule
 =================
 */
+#ifdef __riscos__
+// RISC OS: the game code is linked in (HARDLINK_GAME), so there are no game libraries to load
+uintptr_t Sys_DLL_Load( const char *path ) { return 0; }
+void* Sys_DLL_GetProcAddress( uintptr_t handle, const char *sym ) { return NULL; }
+void Sys_DLL_Unload( uintptr_t handle ) { }
+#else
 uintptr_t Sys_DLL_Load( const char *path ) {
 	void* ret = dlopen( path, RTLD_NOW );
 	if (ret == NULL) {
@@ -341,6 +382,7 @@ Sys_DLL_Unload
 void Sys_DLL_Unload( uintptr_t handle ) {
 	dlclose( (void *)handle );
 }
+#endif
 
 /*
 ================
@@ -517,7 +559,14 @@ static void Posix_InitTime() {
 		if ( pauseLoopsPer5usec == 0 )
 			pauseLoopsPer5usec = 1;
 	} else {
+#ifdef __riscos__
+		// (with only the centisecond clock, 4 million pause instructions may take no
+		// measurable time: not an error here)
+		printf( "Posix_InitTime(): couldn't time the pause loop (%g ms); HAL counter %s\n",
+		        diff, riscos_counterPeriod ? "used" : "not available, centisecond clock" );
+#else
 		assert( 0 && "apparently 1mio pause loops are so fast we can't even measure it?!" );
+#endif
 		pauseLoopsPer5usec = 1000000;
 	}
 	// Note: Due to CPU frequency scaling this is not super precise, but it should be within
@@ -803,6 +852,11 @@ static bool createPathRecursive(char* path)
 	}
 	return true;
 }
+
+#if defined(__riscos__) && !defined(SA_RESETHAND)
+// UnixLib has no SA_RESETHAND: the crash handler ends the program itself
+#define SA_RESETHAND 0
+#endif
 
 void Posix_InitSignalHandlers( void )
 {

@@ -1665,6 +1665,12 @@ sysEvent_t Sys_GetEvent() {
 #endif // SDL2+
 
 		case SDL_QUIT:
+#ifdef __riscos__
+			// SDL's RISC OS driver ends the program at its next event pump after the
+			// desktop asks it to quit (Message_Quit: Task Manager, shutdown), which would
+			// skip the engine's shutdown. So shut down now, as the "quit" command does.
+			common->Quit();
+#endif
 			PushConsoleEvent("quit");
 			return res_none;
 

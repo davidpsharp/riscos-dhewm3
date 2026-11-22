@@ -40,7 +40,9 @@ If you have questions concerning this license or the applicable additional terms
 #include <errno.h>
 #include <sys/select.h>
 #include <net/if.h>
+#ifndef __riscos__
 #include <ifaddrs.h>
+#endif
 
 #include "sys/platform.h"
 #include "framework/Common.h"
@@ -272,10 +274,14 @@ NET_InitNetworking
 */
 void Sys_InitNetworking(void)
 {
+	num_interfaces = 0;
+#ifdef __riscos__
+	// RISC OS has no getifaddrs: no interfaces listed, so only 127.x and the private
+	// ranges count as LAN addresses (Sys_IsLANAddress)
+	common->Printf( "InitNetworking: no interface list on RISC OS\n" );
+#else
 	unsigned int ip, mask;
 	struct ifaddrs *ifap, *ifp;
-
-	num_interfaces = 0;
 
 	if( getifaddrs( &ifap ) < 0 ) {
 		common->FatalError( "InitNetworking: SIOCGIFCONF error - %s\n", strerror( errno ) );
@@ -318,6 +324,7 @@ void Sys_InitNetworking(void)
 			break;
 	}
 	freeifaddrs(ifap);
+#endif
 }
 
 /*

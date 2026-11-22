@@ -26,7 +26,7 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
-#if defined( MACOS_X ) || defined(__unix__)
+#if defined( MACOS_X ) || defined(__unix__) || defined(__riscos__)
 #include <signal.h>
 #include <sys/types.h>
 #endif
@@ -540,7 +540,7 @@ void AssertFailed( const char *file, int line, const char *expression ) {
 #ifdef _MSC_VER
 	__debugbreak();
 	_exit(1);
-#elif defined(__unix__)
+#elif defined(__unix__) || defined(__riscos__)
 	// __builtin_trap() causes an illegal instruction which is kinda ugly.
 	// especially if you'd like to be able to continue after the assertion during debugging
 	raise(SIGTRAP); // this will break into the debugger.
