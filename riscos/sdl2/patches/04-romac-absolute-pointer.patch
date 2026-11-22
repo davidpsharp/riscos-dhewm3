@@ -33,28 +33,32 @@
  }
 --- a/src/video/riscos/SDL_riscosmouse.c
 +++ b/src/video/riscos/SDL_riscosmouse.c
-@@ -88,6 +88,20 @@
+@@ -88,6 +88,24 @@
          RISCOS_WarpPointer(_this, window, x, y);
  }
  
-+/* 2026: RoMac moves RISC OS's pointer to wherever the Mac's is, each time
-+   the Mac's moves, so a pointer put back in the middle doesn't stay there
-+   and every reading would count all the way from the middle again. There
-+   relative mode counts from the last reading instead (and the pointer
-+   isn't moved). SDL$RISCOS_AbsolutePointer 1 or 0 says which to use. */
++/* 2026: RoMac before 0.1.228 moves RISC OS's pointer to wherever the
++   Mac's is, each time the Mac's moves, so a pointer put back in the middle
++   doesn't stay there and every reading would count all the way from the
++   middle again. There relative mode counts from the last reading instead
++   (and the pointer isn't moved). Later RoMacs capture the mouse while the
++   pointer is off and set HostIntegration$PointerCapture to 1: then it's as
++   on hardware. SDL$RISCOS_AbsolutePointer 1 or 0 says which to use. */
 +static int
 +RISCOS_PointerIsAbsolute(void)
 +{
 +    char buf[256];
 +    if (!_kernel_getenv("SDL$RISCOS_AbsolutePointer", buf, sizeof buf))
 +        return buf[0] == '1';
++    if (!_kernel_getenv("HostIntegration$PointerCapture", buf, sizeof buf) && buf[0] == '1')
++        return 0;
 +    return !_kernel_getenv("ix$ROMAC_BIN", buf, sizeof buf);
 +}
 +
  /* 2026: relative mouse mode (SDL_SetRelativeMouseMode): the pointer is
     held in the middle of the window and each poll reports how far it moved
     (RISCOS_PollRelativeMotion in SDL_riscosevents.c). SDL hides the pointer
-@@ -101,7 +115,9 @@
+@@ -101,7 +119,9 @@
          return SDL_Unsupported();
      vdata->relative_mouse = enabled;
      vdata->rel_rest_x = vdata->rel_rest_y = 0;

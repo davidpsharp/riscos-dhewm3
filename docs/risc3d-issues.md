@@ -51,19 +51,32 @@ Outputs kept in `build/d3gltest/*.out`.
     line 410 when it uses handle 0.
   - `*V3DRender` after one d3gltest run: MMU errors go from 473,694 to 950,197, about 470,000
     each run. The last one is always at page address &0931E9E0, status &00000030.
-- **Likely cause** (the riscos-quake3 session's reading of the source, not yet confirmed
-  against the 5.30 kernel):
-  - 64 KB is `HIGH_MIN_RUN` in `riscos/plat_pi4.c`. From there `plat_pages_claim` asks
-    `high_run()` for physically contiguous pages above 1 GB.
-  - That call is OS_Memory 12 with bit 9, r4 = &40000000 and r6 = &FFFFFFFF.
-  - On 5.30 that exact call (`$.code.q3r3d.mem12`) returns page 246784, which is 964 MB:
-    *below* the 1 GB asked for, in the firmware's region. The plain form returns page 12368
-    (48 MB).
-  - So 5.30 seems to ignore the bit 9 range. V3DRender then tries to claim pages it can't
-    own, and the claim, then the fallback, end in -12.
-- **Suggestion:** on 5.30, check that the page returned is at or above HIGH_FROM (or don't use
-  bit 9 there). Alternatively, state 5.31 as the minimum: the V3DRender README says 5.30 or
-  later, while Andy tests on 5.31.
+- **Not the 5.30 kernel** (checked 22 Nov 2026). The earlier reading here was that 5.30 ignores
+  OS_Memory 12's bit 9 range, because the call returned "page 246784, 964 MB". That number is a
+  RISC OS *page number*, not a physical address / 4096:
+  - Converted with OS_Memory 0 on plato (`tests/probes/m12-recommendpage.bas`), page 246784 is
+    physical **&40400000**, above 1 GB as asked, for runs of 4 KB to 4 MB.
+  - RecommendPage (Kernel `s/MemInfo`) has handled bit 9 since df4efb6 (Jeffrey Lee, 2019; first
+    in Kernel-6_56). It is byte-for-byte the same in 5.30 (Kernel-6_70-1/-2). The source was
+    read from a local mirror (riscos311-re's), as ROOL's GitLab was offline.
+- **The cause: 0.13's top-down placement of aligned BOs** (tested 22 Nov 2026 on plato, by
+  swapping in test builds of 0.16 with `RMKill RISC3D`, `RMKill V3DRender`, `RMLoad test`,
+  `RMLoad RISC3D`):
+  - *nohigh* (`high_run` always returns DA_RELEASE, as 0.11): the same failure (22 of 23 checks
+    fail, 19,507 BO failures, ~470k MMU errors). So memory above 1 GB is **not** the cause.
+  - *bottomup* (in `find_pages_aligned`, `align = 1`: every BO first fit from the bottom of the
+    area; high memory left as 0.16): d3gltest passes 13 of 17 checks with **0 MMU errors**,
+    BOs above 1 GB, at 99 fps. The 4 failures are item 6.
+  - So a BO placed near the top of the BO area (PMP page index close to `area_pages`) fails to
+    claim or map: either `OS_DynamicArea 21/22` at high PMP page indexes on 5.30, or V3DRender's
+    page table or MMU entries for those GPU addresses. (A BASIC probe of the PMP calls couldn't
+    create a PMP without a handler, so the kernel side isn't isolated yet.)
+- **With bottomup, dhewm3 reaches its main menu on the Pi 4's GPU**, but loading
+  demo_mars_city1 at Ultra quality gets 292 "Failed to allocate device memory for BO". Mesa then
+  crashes in `mgpu_v3d_bo_map`, reading through freed memory (r6 = &FDFDFDFD, `ldr r0,[r6,#&754]`).
+  So riscos-mesa's v3d also mishandles a failed BO allocation. The same 292 failures happen with
+  `V3DRender$Size` 1024, so it isn't the area filling up. A 1 GB area also leaves too little
+  address space for dhewm3's 1 GB heap ("Unable to allocate logical address space").
 
 ### 3. `*V3DRender`'s "last:" MMU error line prints garbage for the client name
 - **Seen:** pi4-plato, V3DRender 0.16. The first time it read "last: client õ  áÿ/á ãøAmáÀMàø`Íá°å°âàåèå,
@@ -131,3 +144,10 @@ Outputs kept in `build/d3gltest/*.out`.
   and on RISC OS on Linux data aborts arrive by another route.
   - With `crashdumps off` in `romac/data/hd4/!Rorth/Config`, the programs run.
   - Worth a Rorth issue (label `from-riscos-doom3`); not filed yet.
+
+### 6. Mesa v3d (Pi 4): GL_EXT_stencil_two_side has front and back swapped
+- **Seen:** d3gltest on plato with the bottomup V3DRender: `stencil-two-side-zpass` and
+  `-zfail` fail with the two faces' results exchanged (red where green is expected and the other
+  way round). `GL_ATI_separate_stencil` with the same geometry passes, as do both on RoMac.
+- Likely in Mesa's handling of `glActiveStencilFaceEXT` for v3d, or the winding it assumes.
+  dhewm3 uses glStencilOpSeparate (GL 2.0) when it has it, so it may not matter to the game.

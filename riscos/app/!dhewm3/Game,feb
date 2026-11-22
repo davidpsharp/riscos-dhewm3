@@ -1,8 +1,9 @@
 | Game for dhewm3: run by the launcher (!RunImage) to start the game in a desktop window.
 | Its arguments go to dhewm3 (+set ..., +map ...). Output goes to stdout and stderr here.
 RMEnsure PThreadTicker 0.03 RMLoad <dhewm3$Dir>.PThrTicker
-| !MesaLibs' boot runs DAClamp, which lets the heap's dynamic area grow past 128 MB
-IfThere Boot:Resources.!MesaLibs Then Run Boot:Resources.!MesaLibs.!Boot
+| The heap is a dynamic area, which RISC OS 5 caps at 128 MB unless DAClamp (riscos-mesa's,
+| as !MesaLibs and !GTKLibs run at boot) lifts the cap. It's system-wide and harmless to repeat.
+/<dhewm3$Dir>.DAClamp
 
 | Sound: SharedSoundBuffer if it's in !System, else DigitalRenderer.
 RMEnsure StreamManager 0.03 IfThere System:Modules.StreamMan Then RMLoad System:Modules.StreamMan

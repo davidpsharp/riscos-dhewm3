@@ -39,6 +39,19 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "renderer/Image.h"
 
+// RISC OS port: file headers are read from byte buffers at odd offsets; a real ARM
+// (a Pi under RISC OS) faults on an unaligned halfword or word load, so read them with memcpy.
+static ID_INLINE short ReadUnalignedShort( const byte *p ) {
+	short v;
+	memcpy( &v, p, sizeof( v ) );
+	return v;
+}
+static ID_INLINE int ReadUnalignedInt( const byte *p ) {
+	int v;
+	memcpy( &v, p, sizeof( v ) );
+	return v;
+}
+
 /*
 
 This file only has a single entry point:
@@ -240,33 +253,33 @@ static void LoadBMP( const char *name, byte **pic, int *width, int *height, ID_T
 
 	bmpHeader.id[0] = *buf_p++;
 	bmpHeader.id[1] = *buf_p++;
-	bmpHeader.fileSize = LittleInt( * ( int * ) buf_p );
+	bmpHeader.fileSize = LittleInt( ReadUnalignedInt( buf_p ) );
 	buf_p += 4;
-	bmpHeader.reserved0 = LittleInt( * ( int * ) buf_p );
+	bmpHeader.reserved0 = LittleInt( ReadUnalignedInt( buf_p ) );
 	buf_p += 4;
-	bmpHeader.bitmapDataOffset = LittleInt( * ( int * ) buf_p );
+	bmpHeader.bitmapDataOffset = LittleInt( ReadUnalignedInt( buf_p ) );
 	buf_p += 4;
-	bmpHeader.bitmapHeaderSize = LittleInt( * ( int * ) buf_p );
+	bmpHeader.bitmapHeaderSize = LittleInt( ReadUnalignedInt( buf_p ) );
 	buf_p += 4;
-	bmpHeader.width = LittleInt( * ( int * ) buf_p );
+	bmpHeader.width = LittleInt( ReadUnalignedInt( buf_p ) );
 	buf_p += 4;
-	bmpHeader.height = LittleInt( * ( int * ) buf_p );
+	bmpHeader.height = LittleInt( ReadUnalignedInt( buf_p ) );
 	buf_p += 4;
-	bmpHeader.planes = LittleShort( * ( short * ) buf_p );
+	bmpHeader.planes = LittleShort( ReadUnalignedShort( buf_p ) );
 	buf_p += 2;
-	bmpHeader.bitsPerPixel = LittleShort( * ( short * ) buf_p );
+	bmpHeader.bitsPerPixel = LittleShort( ReadUnalignedShort( buf_p ) );
 	buf_p += 2;
-	bmpHeader.compression = LittleInt( * ( int * ) buf_p );
+	bmpHeader.compression = LittleInt( ReadUnalignedInt( buf_p ) );
 	buf_p += 4;
-	bmpHeader.bitmapDataSize = LittleInt( * ( int * ) buf_p );
+	bmpHeader.bitmapDataSize = LittleInt( ReadUnalignedInt( buf_p ) );
 	buf_p += 4;
-	bmpHeader.hRes = LittleInt( * ( int * ) buf_p );
+	bmpHeader.hRes = LittleInt( ReadUnalignedInt( buf_p ) );
 	buf_p += 4;
-	bmpHeader.vRes = LittleInt( * ( int * ) buf_p );
+	bmpHeader.vRes = LittleInt( ReadUnalignedInt( buf_p ) );
 	buf_p += 4;
-	bmpHeader.colors = LittleInt( * ( int * ) buf_p );
+	bmpHeader.colors = LittleInt( ReadUnalignedInt( buf_p ) );
 	buf_p += 4;
-	bmpHeader.importantColors = LittleInt( * ( int * ) buf_p );
+	bmpHeader.importantColors = LittleInt( ReadUnalignedInt( buf_p ) );
 	buf_p += 4;
 
 	memcpy( bmpHeader.palette, buf_p, sizeof( bmpHeader.palette ) );
@@ -326,7 +339,7 @@ static void LoadBMP( const char *name, byte **pic, int *width, int *height, ID_T
 				*pixbuf++ = 0xff;
 				break;
 			case 16:
-				shortPixel = * ( unsigned short * ) pixbuf;
+				shortPixel = (unsigned short)ReadUnalignedShort( pixbuf );
 				pixbuf += 2;
 				*pixbuf++ = ( shortPixel & ( 31 << 10 ) ) >> 7;
 				*pixbuf++ = ( shortPixel & ( 31 << 5 ) ) >> 2;
@@ -553,18 +566,18 @@ static void LoadTGA( const char *name, byte **pic, int *width, int *height, ID_T
 	targa_header.colormap_type = *buf_p++;
 	targa_header.image_type = *buf_p++;
 
-	targa_header.colormap_index = LittleShort ( *(short *)buf_p );
+	targa_header.colormap_index = LittleShort ( ReadUnalignedShort( buf_p ) );
 	buf_p += 2;
-	targa_header.colormap_length = LittleShort ( *(short *)buf_p );
+	targa_header.colormap_length = LittleShort ( ReadUnalignedShort( buf_p ) );
 	buf_p += 2;
 	targa_header.colormap_size = *buf_p++;
-	targa_header.x_origin = LittleShort ( *(short *)buf_p );
+	targa_header.x_origin = LittleShort ( ReadUnalignedShort( buf_p ) );
 	buf_p += 2;
-	targa_header.y_origin = LittleShort ( *(short *)buf_p );
+	targa_header.y_origin = LittleShort ( ReadUnalignedShort( buf_p ) );
 	buf_p += 2;
-	targa_header.width = LittleShort ( *(short *)buf_p );
+	targa_header.width = LittleShort ( ReadUnalignedShort( buf_p ) );
 	buf_p += 2;
-	targa_header.height = LittleShort ( *(short *)buf_p );
+	targa_header.height = LittleShort ( ReadUnalignedShort( buf_p ) );
 	buf_p += 2;
 	targa_header.pixel_size = *buf_p++;
 	targa_header.attributes = *buf_p++;

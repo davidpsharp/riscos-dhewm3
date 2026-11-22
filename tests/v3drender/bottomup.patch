@@ -1,0 +1,27 @@
+diff --git a/core/v3d_bo.c b/core/v3d_bo.c
+index d355673..1b7456d 100644
+--- a/core/v3d_bo.c
++++ b/core/v3d_bo.c
+@@ -115,7 +115,8 @@ range_free (struct v3d_dev *v3d, uint32_t p, uint32_t n)
+ static int
+ find_pages_aligned (struct v3d_dev *v3d, uint32_t n, uint32_t *first)
+ {
+-  uint32_t align = n >= 256 ? 256 : n >= 16 ? 16 : 1;
++  uint32_t align = 1;	/* riscos-doom3 test build: no top-down aligned placement */
++  (void) range_free;
+   if (align > 1 && n < v3d->area_pages)
+     for (uint32_t p = (v3d->area_pages - n) & ~(align - 1); p >= align; p -= align)
+       if (range_free (v3d, p, n))
+diff --git a/riscos/header.s b/riscos/header.s
+index e463a4c..84b3a02 100644
+--- a/riscos/header.s
++++ b/riscos/header.s
+@@ -28,7 +28,7 @@ module_start:
+ 	.word	flags - module_start
+ 
+ title:	.asciz	"V3DRender"
+-help:	.asciz	"V3DRender\t0.16 (18 Nov 2026) Pi 4 GPU driver (V3D 4.2), after Linux's v3d"
++help:	.asciz	"V3DRender\t0.16 (22 Nov 2026) bottomup test build: Pi 4 GPU driver (V3D 4.2), after Linux's v3d"
+ swi_names:
+ 	.asciz	"V3DRender\0Info\0Open\0Close\0Ioctl\0Reset\0Debug\0"
+ 	.align	2

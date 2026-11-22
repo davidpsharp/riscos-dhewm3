@@ -624,6 +624,25 @@ struct JobState {
 	bool got_licence = false, got_pk4 = false;
 } Job;
 
+/* Files with 1 MB buffers: SDFS on a Pi is slow with UnixLib's default 4 KB writes (the
+   install ran at under 1 MB/s). Each role has its own buffer, kept for the next job. */
+enum { BUF_OUT, BUF_IN, BUF_ENTRY, BUF_ROLES };
+FILE * Open_Big(std::string const & path, char const * mode, int role)
+{
+	static char * buffers[BUF_ROLES];
+	size_t const size = 1024 * 1024;
+	FILE * f = fopen(path.c_str(), mode);
+	if (f != nullptr) {
+		if (buffers[role] == nullptr) {
+			buffers[role] = (char *)malloc(size);
+		}
+		if (buffers[role] != nullptr) {
+			setvbuf(f, buffers[role], _IOFBF, size);
+		}
+	}
+	return f;
+}
+
 std::string Run_File(void) { return App_Path("download/") + DemoLeaf; }
 std::string Pk4_Part(void) { return App_Path("demo/demo00.pk4.part"); }
 
@@ -643,6 +662,7 @@ void Abandon(bool remove_run)
 	remove(Pk4_Part().c_str());
 	if (remove_run) {
 		remove(Run_File().c_str());
+		rmdir(App_Path("download").c_str());
 		remove(App_Path("demo/License.txt").c_str());
 	}
 	JobStage = IDLE;
@@ -688,6 +708,14 @@ void Connect(std::string const & url)
 	if (Job.fd < 0) {
 		Next_Mirror("no socket");
 		return;
+	}
+	// RISC OS's stack gives a small receive buffer (so a small TCP window): over ~30 ms to a
+	// mirror that held a Pi 4 to about 0.7 MB/s. Ask for the biggest it allows.
+	for (int size = 1024 * 1024; size >= 32 * 1024; size /= 2) {
+		if (setsockopt(Job.fd, SOL_SOCKET, SO_RCVBUF, &size, sizeof(size)) == 0) {
+			fprintf(stderr, "launcher: receive buffer %d KB\n", size / 1024);
+			break;
+		}
 	}
 	int on = 1;
 	ioctl(Job.fd, FIONBIO, &on);
@@ -870,7 +898,7 @@ void Download_Tick(void)
 				Next_Mirror(Job.host + " offered a file of another size");
 				return;
 			}
-			Job.out = fopen(Run_File().c_str(), "wb");
+			Job.out = Open_Big(Run_File(), "wb", BUF_OUT);
 			if (Job.out == nullptr) {
 				Fail("Couldn't write the download in !dhewm3.download (" + std::string(strerror(errno)) + ").", false);
 				return;
@@ -919,7 +947,7 @@ void Start_From_File(std::string const & riscos_path)
 		Tell("Couldn't open " + riscos_path + ".", true);
 		return;
 	}
-	Job.in = fopen(unix_name, "rb");
+	Job.in = Open_Big(unix_name, "rb", BUF_IN);
 	if (Job.in == nullptr) {
 		Tell("Couldn't open " + riscos_path + ".", true);
 		return;
@@ -966,7 +994,7 @@ void Hash_Tick(void)
 void Begin_Archive(void)
 {
 	if (Job.in == nullptr) {
-		Job.in = fopen(Run_File().c_str(), "rb");
+		Job.in = Open_Big(Run_File(), "rb", BUF_IN);
 		if (Job.in == nullptr) {
 			Fail("Couldn't read the downloaded installer back.", true);
 			return;
@@ -1012,6 +1040,24 @@ std::string Riscos_Name(std::string const & unix_path)
 	return riscos;
 }
 
+unsigned Raise_Question_At = 0;	// when to bring the question back in front (0: no need)
+
+void Raise_Question(void)
+{
+	Raise_Question_At = 0;
+	if (MessageWindow < 0) {
+		return;
+	}
+	int state[9];
+	state[0] = MessageWindow;
+	_kernel_swi_regs regs;
+	regs.r[1] = (int)state;
+	if (Swi(Wimp_GetWindowState, regs)) {
+		state[7] = -1;	// in front
+		Swi(Wimp_OpenWindow, regs);
+	}
+}
+
 void Licence_Ready(void)
 {
 	Set_Type(App_Path("demo/License.txt"), 0xFFF);
@@ -1021,6 +1067,7 @@ void Licence_Ready(void)
 		"Do you accept id's licence?", false,
 		{{"Decline", ACT_DECLINE}, {"Show licence", ACT_LICENCE}, {"Accept", ACT_ACCEPT}});
 	Oscli("Filer_Run " + Riscos_Name(App_Path("demo/License.txt")));
+	Raise_Question_At = Now() + 150;	// the editor opens later, often over the question
 }
 
 void Install_Finished(void);
@@ -1109,14 +1156,14 @@ bool Tar_Feed(unsigned char const * p, size_t n)
 		Job.entry_kind = 0;
 		if (Job.entry_left > 0 && strcmp(leaf, LicenceName) == 0 && !Job.got_licence) {
 			Job.entry_kind = 1;
-			Job.entry_out = fopen(App_Path("demo/License.txt").c_str(), "wb");
+			Job.entry_out = Open_Big(App_Path("demo/License.txt"), "wb", BUF_ENTRY);
 		} else if (Job.entry_left > 0 && strcmp(leaf, Pk4Name) == 0 && Job.got_licence && JobStage == INSTALLING) {
 			if (size != Pk4Size) {
 				Fail("The demo's data file in the installer is the wrong size.", true);
 				return false;
 			}
 			Job.entry_kind = 2;
-			Job.entry_out = fopen(Pk4_Part().c_str(), "wb");
+			Job.entry_out = Open_Big(Pk4_Part(), "wb", BUF_ENTRY);
 		}
 		if (Job.entry_kind != 0) {
 			if (Job.entry_out == nullptr) {
@@ -1140,7 +1187,8 @@ void Archive_Tick(void)
 	while ((int)(until - Now()) > 0) {
 		if (UnpackedAt < UnpackedEnd) {
 			// feed in 512-byte steps, so that stopping for the licence loses nothing
-			size_t step = UnpackedEnd - UnpackedAt < 512 ? UnpackedEnd - UnpackedAt : 512;
+			size_t const most = Job.got_licence ? UnpackedEnd - UnpackedAt : 512;
+			size_t step = UnpackedEnd - UnpackedAt < most ? UnpackedEnd - UnpackedAt : most;
 			Stage before = JobStage;
 			bool go_on = Tar_Feed(Unpacked + UnpackedAt, step);
 			UnpackedAt += step;
@@ -1307,7 +1355,7 @@ void Poll_Loop(void)
 {
 	int block[64];
 	for (;;) {
-		bool busy = JobStage != IDLE && JobStage != LICENCE_WAIT;
+		bool busy = (JobStage != IDLE && JobStage != LICENCE_WAIT) || Raise_Question_At != 0;
 		_kernel_swi_regs regs;
 		regs.r[0] = busy ? 0 : 1;	// null events only while there's work
 		regs.r[1] = (int)block;
@@ -1321,6 +1369,9 @@ void Poll_Loop(void)
 		}
 		switch (regs.r[0]) {
 			case 0:	// Null_Reason
+				if (Raise_Question_At != 0 && (int)(Now() - Raise_Question_At) >= 0) {
+					Raise_Question();
+				}
 				switch (JobStage) {
 					case CONNECTING: case HEADERS: case BODY: Download_Tick(); break;
 					case HASHING: Hash_Tick(); break;

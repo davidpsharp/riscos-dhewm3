@@ -1,0 +1,10 @@
+--- a/riscos/plat_pi4.c
++++ b/riscos/plat_pi4.c
+@@ -493,4 +493,7 @@
+ high_run (uint32_t pages, uint32_t align_log2)
+ {
++  /* riscos-doom3 diagnostic build: never ask for memory above 1 GB (0.11's behaviour) */
++  (void) pages; (void) align_log2;
++  return DA_RELEASE;
+   regs r = {{ 12u | 1u << 9, pages << 12, align_log2, 0,
+ 	      HIGH_FROM, 0, 0xFFFFFFFFu, 0 }};

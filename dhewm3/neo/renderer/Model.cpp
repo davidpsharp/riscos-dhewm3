@@ -933,7 +933,7 @@ bool idRenderModelStatic::ConvertASEToModelSurfaces( const struct aseModel_s *as
 					if ( mv->tv != tv ) {
 						continue;
 					}
-					if ( *(unsigned *)mv->color != *(unsigned *)color ) {
+					if ( memcmp( mv->color, color, 4 ) != 0 ) {
 						continue;
 					}
 					if ( !normalsParsed ) {
@@ -951,7 +951,7 @@ bool idRenderModelStatic::ConvertASEToModelSurfaces( const struct aseModel_s *as
 					mv->v = v;
 					mv->tv = tv;
 					mv->normal = normal;
-					*(unsigned *)mv->color = *(unsigned *)color;
+					memcpy( mv->color, color, 4 );
 					mv->next = NULL;
 					if ( lastmv ) {
 						lastmv->next = mv;
@@ -997,7 +997,7 @@ bool idRenderModelStatic::ConvertASEToModelSurfaces( const struct aseModel_s *as
 			tri->verts[ j ].Clear();
 			tri->verts[ j ].xyz = mesh->vertexes[ mv->v ];
 			tri->verts[ j ].normal = mv->normal;
-			*(unsigned *)tri->verts[j].color = *(unsigned *)mv->color;
+			memcpy( tri->verts[j].color, mv->color, 4 );
 			if ( mesh->numTVFaces == mesh->numFaces && mesh->numTVertexes != 0 ) {
 				const idVec2 &tv = mesh->tvertexes[ mv->tv ];
 				float u = tv.x * uTiling + uOffset;
@@ -1305,7 +1305,7 @@ bool idRenderModelStatic::ConvertLWOToModelSurfaces( const struct st_lwObject *l
 					if ( mv->tv != tv ) {
 						continue;
 					}
-					if ( *(unsigned *)mv->color != *(unsigned *)color ) {
+					if ( memcmp( mv->color, color, 4 ) != 0 ) {
 						continue;
 					}
 					if ( !normalsParsed ) {
@@ -1323,7 +1323,7 @@ bool idRenderModelStatic::ConvertLWOToModelSurfaces( const struct st_lwObject *l
 					mv->v = v;
 					mv->tv = tv;
 					mv->normal = normal;
-					*(unsigned *)mv->color = *(unsigned *)color;
+					memcpy( mv->color, color, 4 );
 					mv->next = NULL;
 					if ( lastmv ) {
 						lastmv->next = mv;
@@ -1354,7 +1354,7 @@ bool idRenderModelStatic::ConvertLWOToModelSurfaces( const struct st_lwObject *l
 			tri->verts[ j ].xyz = vList[ mv->v ];
 			tri->verts[ j ].st = tvList[ mv->tv ];
 			tri->verts[ j ].normal = mv->normal;
-			*(unsigned *)tri->verts[j].color = *(unsigned *)mv->color;
+			memcpy( tri->verts[j].color, mv->color, 4 );
 		}
 
 		R_StaticFree( mvTable );
@@ -1780,7 +1780,7 @@ bool idRenderModelStatic::ConvertMAToModelSurfaces (const struct maModel_s *ma )
 					if ( mv->tv != tv ) {
 						continue;
 					}
-					if ( *(unsigned *)mv->color != *(unsigned *)color ) {
+					if ( memcmp( mv->color, color, 4 ) != 0 ) {
 						continue;
 					}
 					if ( !normalsParsed ) {
@@ -1798,7 +1798,7 @@ bool idRenderModelStatic::ConvertMAToModelSurfaces (const struct maModel_s *ma )
 					mv->v = v;
 					mv->tv = tv;
 					mv->normal = normal;
-					*(unsigned *)mv->color = *(unsigned *)color;
+					memcpy( mv->color, color, 4 );
 					mv->next = NULL;
 					if ( lastmv ) {
 						lastmv->next = mv;
@@ -1845,7 +1845,7 @@ bool idRenderModelStatic::ConvertMAToModelSurfaces (const struct maModel_s *ma )
 			tri->verts[ j ].Clear();
 			tri->verts[ j ].xyz = mesh->vertexes[ mv->v ];
 			tri->verts[ j ].normal = mv->normal;
-			*(unsigned *)tri->verts[j].color = *(unsigned *)mv->color;
+			memcpy( tri->verts[j].color, mv->color, 4 );
 			if ( mesh->numTVertexes != 0 ) {
 				const idVec2 &tv = mesh->tvertexes[ mv->tv ];
 				float u = tv.x * uTiling + uOffset;

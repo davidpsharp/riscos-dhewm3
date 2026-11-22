@@ -16,4 +16,6 @@ elf2aif -e build/riscos/dhewm3.stripped "$A/dhewm3,ff8" >/dev/null
 rm build/riscos/dhewm3.stripped
 cp build/launcher/launcher,ff8 "$A/!RunImage,ff8"
 cp "$RISCOS_DEVKIT/riscos/PThrTicker,ffa" "$A/"
+# riscos-mesa's DAClamp (lifts RISC OS 5's 128 MB cap on dynamic areas; Game runs it)
+cp "$RISCOS_DEVKIT/riscos/!MesaLibs/DAClamp,ffc" "$A/"
 ls -l "$A"

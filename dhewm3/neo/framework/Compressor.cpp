@@ -486,7 +486,7 @@ int idCompressor_BitStream::Compare( const byte *src1, int bitPtr1, const byte *
 		int remain = bitsRemain >> 3;
 
 		// Compare the middle bytes as ints
-		while ( remain >= 4 && (*(const int *)p1 == *(const int *)p2) ) {
+		while ( remain >= 4 && memcmp( p1, p2, 4 ) == 0 ) {
 			p1 += 4;
 			p2 += 4;
 			remain -= 4;
