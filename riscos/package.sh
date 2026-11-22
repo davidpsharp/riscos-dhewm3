@@ -1,15 +1,19 @@
 #!/bin/sh
-# Makes build/riscos/app/!dhewm3 from build/riscos/dhewm3, in the doom3-riscos image:
+# Makes build/riscos/app/!dhewm3 from build/riscos/dhewm3 and the launcher, in the doom3-riscos
+# image:
 #   riscos/sdk.sh riscos/package.sh
-# The unstripped ELF stays at build/riscos/dhewm3 for ro-run dump --elf.
+# !RunImage is the launcher (icon bar, demo download); dhewm3 is the game, started by Game.
+# The unstripped ELFs stay in build/ for ro-run dump --elf.
 set -e
 cd /work
+riscos/launcher/build.sh >/dev/null
 A=build/riscos/app/!dhewm3
 rm -rf "$A"
 mkdir -p "$A"
 cp -r riscos/app/!dhewm3/. "$A"/
 arm-riscos-gnueabihf-strip -o build/riscos/dhewm3.stripped build/riscos/dhewm3
-elf2aif -e build/riscos/dhewm3.stripped "$A/!RunImage,ff8" >/dev/null
+elf2aif -e build/riscos/dhewm3.stripped "$A/dhewm3,ff8" >/dev/null
 rm build/riscos/dhewm3.stripped
+cp build/launcher/launcher,ff8 "$A/!RunImage,ff8"
 cp "$RISCOS_DEVKIT/riscos/PThrTicker,ffa" "$A/"
 ls -l "$A"

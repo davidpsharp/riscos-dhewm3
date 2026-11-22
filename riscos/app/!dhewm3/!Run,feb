@@ -1,28 +1,14 @@
-| !Run for dhewm3 (Doom 3) on RISC OS
-| The game data goes beside !RunImage: base (Doom 3) or demo (the free demo's demo00.pk4).
+| !Run for dhewm3 (the Doom 3 engine) on RISC OS: the launcher on the icon bar.
+| Click its icon to play; without game data it offers to download the free Doom 3 demo.
+| The game itself is started by the launcher through the Obey file Game.
 Set dhewm3$Dir <Obey$Dir>
-IfThere <dhewm3$Dir>.!Sprites Then IconSprites <dhewm3$Dir>.!Sprites
+IconSprites <dhewm3$Dir>.!Sprites
 
-| --- Runtime support ----
 RMEnsure SharedUnixLibrary 1.16 IfThere System:Modules.SharedULib Then RMLoad System:Modules.SharedULib
 RMEnsure SharedUnixLibrary 1.16 Error dhewm3 needs SharedUnixLibrary 1.16 or later (from PackMan)
 RMEnsure ARMEABISupport 1.03 IfThere System:Modules.ARMEABISupport Then RMLoad System:Modules.ARMEABISupport
 RMEnsure ARMEABISupport 1.03 Error dhewm3 needs ARMEABISupport 1.03 or later (from PackMan)
-RMEnsure PThreadTicker 0.03 RMLoad <dhewm3$Dir>.PThrTicker
-| !MesaLibs' boot runs DAClamp, which lets the heap's dynamic area grow past 128 MB
-IfThere Boot:Resources.!MesaLibs Then Run Boot:Resources.!MesaLibs.!Boot
-RMEnsure RISC3D 0.05 Error dhewm3 needs !RISC3D (RISC3D 0.05 or later) in !Boot.Resources
+RMEnsure RISC3D 0.05 Error dhewm3 needs !RISC3D (RISC3D 0.05 or later) in !Boot.Resources, to draw with the GPU
 
-| --- Sound: SharedSoundBuffer if it's in !System, else DigitalRenderer.
-RMEnsure StreamManager 0.03 IfThere System:Modules.StreamMan Then RMLoad System:Modules.StreamMan
-RMEnsure SharedSoundBuffer 0.07 IfThere System:Modules.SSBuffer Then RMLoad System:Modules.SSBuffer
-RMEnsure DigitalRenderer 0.55 IfThere System:Modules.DRenderer Then RMLoad System:Modules.DRenderer
-
-| Settings and saves inside the app for now
-Set XDG_DATA_HOME ./home
-Set XDG_CONFIG_HOME ./home
-
-| The heap is a dynamic area, so the slot only holds the program.
-WimpSlot -min 64000K -max 64000K
-Dir <dhewm3$Dir>
-Run <dhewm3$Dir>.!RunImage +set fs_basepath . +set r_fullscreen 0 +set r_mode -1 +set r_customWidth 800 +set r_customHeight 600 %*0 >/<dhewm3$Dir>/stdout 2>/<dhewm3$Dir>/stderr
+WimpSlot -min 2048K -max 2048K
+Run <dhewm3$Dir>.!RunImage %*0 2>/<dhewm3$Dir>/launcherlog

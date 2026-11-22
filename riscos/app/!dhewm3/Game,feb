@@ -1,0 +1,19 @@
+| Game for dhewm3: run by the launcher (!RunImage) to start the game in a desktop window.
+| Its arguments go to dhewm3 (+set ..., +map ...). Output goes to stdout and stderr here.
+RMEnsure PThreadTicker 0.03 RMLoad <dhewm3$Dir>.PThrTicker
+| !MesaLibs' boot runs DAClamp, which lets the heap's dynamic area grow past 128 MB
+IfThere Boot:Resources.!MesaLibs Then Run Boot:Resources.!MesaLibs.!Boot
+
+| Sound: SharedSoundBuffer if it's in !System, else DigitalRenderer.
+RMEnsure StreamManager 0.03 IfThere System:Modules.StreamMan Then RMLoad System:Modules.StreamMan
+RMEnsure SharedSoundBuffer 0.07 IfThere System:Modules.SSBuffer Then RMLoad System:Modules.SSBuffer
+RMEnsure DigitalRenderer 0.55 IfThere System:Modules.DRenderer Then RMLoad System:Modules.DRenderer
+
+| Settings and saves in !dhewm3.home for now
+Set XDG_DATA_HOME ./home
+Set XDG_CONFIG_HOME ./home
+
+| The heap is a dynamic area, so the slot only holds the program.
+WimpSlot -min 64000K -max 64000K
+Dir <dhewm3$Dir>
+Run <dhewm3$Dir>.dhewm3 +set fs_basepath . +set r_fullscreen 0 +set r_mode -1 +set r_customWidth 800 +set r_customHeight 600 %*0 >/<dhewm3$Dir>/stdout 2>/<dhewm3$Dir>/stderr

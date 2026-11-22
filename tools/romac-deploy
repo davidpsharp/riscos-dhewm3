@@ -1,14 +1,21 @@
 #!/bin/sh
-# Packages the RISC OS build and puts !dhewm3 (with the demo data) on romac-doom3's disc.
-#   tools/romac-deploy        (after riscos/sdk.sh riscos/build.sh)
+# Packages the RISC OS build and puts !dhewm3 on romac-doom3's disc (Work.!dhewm3).
+#   tools/romac-deploy [--with-demo | --no-demo]
+#     --with-demo  put the demo's data in too (from data/demo-extract), to skip the download
+#     --no-demo    take any installed demo data out, to try the launcher's download
+#   (neither: game data already there is left alone)
+# Settings, saves and logs in the app are kept.
 set -e
 top=$(cd "$(dirname "$0")/.." && pwd)
 cd "$top"
 riscos/sdk.sh riscos/package.sh >/dev/null
 W='romac/data/hd4/Work/!dhewm3'
-mkdir -p "$W/demo"
-# the program and its files; game data, settings and logs stay
+mkdir -p "$W"
+rm -f "$W/!RunImage,ff8" "$W/dhewm3,ff8"
 cp -R build/riscos/app/'!dhewm3'/. "$W"/
-[ -f "$W/demo/demo00.pk4" ] || cp -c data/demo-extract/demo/demo00.pk4 "$W/demo/demo00.pk4"
-rm -f "$W/stdout" "$W/stderr"
+case "$1" in
+--with-demo) mkdir -p "$W/demo"; [ -f "$W/demo/demo00.pk4" ] || cp -c data/demo-extract/demo/demo00.pk4 "$W/demo/demo00.pk4" ;;
+--no-demo) rm -rf "$W/demo" "$W/download" ;;
+esac
+rm -f "$W/stdout" "$W/stderr" "$W/launcherlog"
 echo "deployed to $W"

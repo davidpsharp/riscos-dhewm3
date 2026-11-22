@@ -1,0 +1,3 @@
+| !Boot for dhewm3
+IfThere <dhewm3$Dir> Then Else Set dhewm3$Dir <Obey$Dir>
+IconSprites <Obey$Dir>.!Sprites

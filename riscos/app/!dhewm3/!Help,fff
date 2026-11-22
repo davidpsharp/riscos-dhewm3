@@ -1,0 +1,62 @@
+dhewm3 for RISC OS
+==================
+
+dhewm3 is the Doom 3 engine (id Software's GPL source, kept up by the dhewm3
+team). This is its RISC OS port. It draws with the GPU through RISC3D, and
+needs RISC OS 5 on ARMv7 or later.
+
+It runs on:
+- RoMac (RISC OS on a Mac), drawing on the Mac's GPU;
+- RISC OS on Linux, on a machine whose GPU Linux drives (not yet tested);
+- a Raspberry Pi 4 running RISC OS: not yet (RISC3D's Pi 4 driver can't
+  yet give it the memory it needs on RISC OS 5.30).
+
+You need !RISC3D (RISC3D 0.05 or later), !MesaLibs and !SharedLibs in
+!Boot.Resources.
+
+
+Playing
+-------
+
+Double-click !dhewm3: its icon appears on the icon bar. Click the icon to
+play. The game runs in an 800 x 600 desktop window.
+
+The first time, there is no game data, so clicking the icon offers to
+download the free Doom 3 demo:
+- It downloads id Software's own Linux demo installer
+  (doom3-linux-1.1.1286-demo.x86.run, 485 MB) from a mirror of id's FTP
+  site, and checks it (SHA-256).
+- id's licence for the demo then opens in your text editor. The demo is
+  installed only if you accept it; if you decline, the download is
+  deleted.
+- The demo's data file goes into !dhewm3.demo (demo00/pk4, 484 MB) and
+  the installer is deleted. Then the game starts.
+Allow about 1 GB of free space while that happens.
+
+If you already have the installer, drag it onto the icon instead.
+
+id's licence doesn't allow the demo to be passed on, so it isn't in this
+package: it comes from id's archive when you ask for it.
+
+
+The full game
+-------------
+
+Put the full game's base folder (from the Steam or GOG version of Doom 3:
+pak000/pk4 to pak008/pk4) in !dhewm3, as !dhewm3.base. A click on the icon
+then plays the full game.
+
+
+Files
+-----
+
+!dhewm3.home      settings and saved games
+!dhewm3.stdout    the game's log (and stderr: its errors)
+!dhewm3.launcherlog  the launcher's log (downloads and installs)
+
+
+Credits
+-------
+
+Doom 3 (c) id Software. dhewm3: Daniel Gibson and contributors, GPL 3
+(see the source). RISC3D, riscos-mesa: Andrew Youll. Port: David Sharp.

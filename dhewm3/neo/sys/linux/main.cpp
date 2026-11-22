@@ -78,6 +78,8 @@ If you have questions concerning this license or the applicable additional terms
 
 #ifdef __riscos__
 #include <unixlib/local.h>
+#include <kernel.h>
+#include <swis.h>
 // UnixLib: the heap in a dynamic area of its own (up to 1 GB; !MesaLibs' DAClamp lifts RISC
 // OS 5's 128 MB limit), so the WimpSlot only holds the program; a 4 MB stack, as Doom 3
 // uses alloca a lot; and file names left as they are (no "foo.c" to "c.foo" swapping).
@@ -289,6 +291,17 @@ int Sys_GetSystemRam( void ) {
 	long	count, page_size;
 	int		mb;
 
+#ifdef __riscos__
+	// UnixLib's sysconf has no page count: OS_ReadMemMapInfo gives the page size and count
+	{
+		_kernel_swi_regs regs;
+		if ( _kernel_swi( OS_ReadMemMapInfo, &regs, &regs ) == NULL && regs.r[0] > 0 && regs.r[1] > 0 ) {
+			mb = (int)( (double)regs.r[0] * (double)regs.r[1] / ( 1024 * 1024 ) );
+			return ( mb + 8 ) & ~15;
+		}
+		return 512;
+	}
+#endif
 	count = sysconf( _SC_PHYS_PAGES );
 	if ( count == -1 ) {
 		common->Printf( "GetSystemRam: sysconf _SC_PHYS_PAGES failed\n" );
