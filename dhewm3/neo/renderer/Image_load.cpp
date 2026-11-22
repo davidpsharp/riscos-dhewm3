@@ -45,6 +45,8 @@ static bool FormatIsDXT( int internalFormat ) {
 	return true;
 }
 
+idCVar r_npotFramebufferCopy( "r_npotFramebufferCopy", "1", CVAR_RENDERER | CVAR_BOOL, "copy the framebuffer into textures of its own size when the GPU allows non-power-of-two textures" );
+
 int MakePowerOfTwo( int num ) {
 	int		pot;
 	for (pot = 1 ; pot < num ; pot<<=1) {
@@ -1919,6 +1921,14 @@ void idImage::CopyFramebuffer( int x, int y, int imageWidth, int imageHeight, bo
 
 	potWidth = MakePowerOfTwo( imageWidth );
 	potHeight = MakePowerOfTwo( imageHeight );
+	// RISC OS port: with non-power-of-two textures, copy the frame at its own size. A copy into
+	// a power-of-two texture also needs an extra row and column copied, and on the Pi 4's GPU
+	// (Mesa v3d) each copy ends the current render job: 3 jobs instead of 1 per copy.
+	// (Post-processing reads the texture's size, uploadWidth/Height, so it needs no change.)
+	if ( glConfig.textureNonPowerOfTwoAvailable && r_npotFramebufferCopy.GetBool() ) {
+		potWidth = imageWidth;
+		potHeight = imageHeight;
+	}
 
 	GetDownsize( imageWidth, imageHeight );
 	GetDownsize( potWidth, potHeight );
@@ -1988,6 +1998,14 @@ void idImage::CopyDepthbuffer( int x, int y, int imageWidth, int imageHeight, bo
 
 	potWidth = MakePowerOfTwo( imageWidth );
 	potHeight = MakePowerOfTwo( imageHeight );
+	// RISC OS port: with non-power-of-two textures, copy the frame at its own size. A copy into
+	// a power-of-two texture also needs an extra row and column copied, and on the Pi 4's GPU
+	// (Mesa v3d) each copy ends the current render job: 3 jobs instead of 1 per copy.
+	// (Post-processing reads the texture's size, uploadWidth/Height, so it needs no change.)
+	if ( glConfig.textureNonPowerOfTwoAvailable && r_npotFramebufferCopy.GetBool() ) {
+		potWidth = imageWidth;
+		potHeight = imageHeight;
+	}
 	GetDownsize( imageWidth, imageHeight );
 	GetDownsize( potWidth, potHeight );
 	// Ensure we are reading from the back buffer:

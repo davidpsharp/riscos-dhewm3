@@ -472,6 +472,28 @@ static void riscos_prof_start( void ) {
 int main(int argc, char **argv) {
 #ifdef __riscos__
 	riscos_prof_start();
+	// On the Pi 4's GPU (the V3DRender module), post-processing (heat haze, glass) costs
+	// ~40 ms a frame: Mesa v3d copies the frame through the CPU. Off by default there; the
+	// player's own "+set r_skipPostProcess 0" comes later and wins.
+	static const char *riscos_args[64];
+	{
+		_kernel_swi_regs r;
+		r.r[0] = 18;
+		r.r[1] = (int)"V3DRender";
+		if ( argc >= 1 && argc < 60 && _kernel_swi( OS_Module, &r, &r ) == NULL ) {
+			int n = 0;
+			riscos_args[n++] = argv[0];
+			riscos_args[n++] = "+set";
+			riscos_args[n++] = "r_skipPostProcess";
+			riscos_args[n++] = "1";
+			for ( int i = 1; i < argc; i++ ) {
+				riscos_args[n++] = argv[i];
+			}
+			riscos_args[n] = NULL;
+			argc = n;
+			argv = (char **)riscos_args;
+		}
+	}
 #endif
 	// Prevent running Doom 3 as root
 	// Borrowed from Yamagi Quake II

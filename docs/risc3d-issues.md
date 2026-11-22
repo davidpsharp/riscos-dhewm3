@@ -228,6 +228,26 @@ Outputs kept in `build/d3gltest/*.out`.
   `V3DM$Why` output); whether the BO cache (Mesa's `v3d_bo_cache`) is active on RISC OS; and
   whether a frame copy could stay on the GPU without ending the job.
 
+- **Follow-up, 22 Nov 2026 evening (per-frame `V3DM$Why` in play, same view each run):**
+  - Of ~7 jobs a frame: 1 swap; 4 flushes before `v3d_blit` (frame copies,
+    `glCopyTexSubImage2D`); 1 from `v3d_draw_vbo`; 1 from `v3d_resource_transfer_map`
+    mapping for *reading* something a job just drew.
+  - dhewm3 copied the 800x600 frame into a 1024x1024 texture as three copies (the image, an
+    extra column, an extra row). Copying at the frame's own size (non-power-of-two textures, now
+    the default in the port, `r_npotFramebufferCopy`): **7 -> 5 jobs**, 117 -> 100 ms a frame.
+  - Turning post-processing off (`r_skipPostProcess 1`) removes the last copy *and* the
+    `transfer_map` read: **3 jobs a frame**. So Mesa's `glCopyTexSubImage2D` from the window
+    reads the frame back through the CPU (st's fallback) instead of blitting on the GPU. An
+    RGBA8 texture instead of RGB8 made no difference. Possibly because the window's colour
+    buffer is linear imported memory that v3d's blit can't take as a source. **This is the
+    single biggest cost**: ~40 ms a frame. The port now turns post-processing off when
+    V3DRender is loaded. Fixing the copy would bring back the heat haze and glass effects.
+  - Frame rates now: ~11-15 fps looking across the hangar, ~26-28 fps facing a wall (from ~9).
+    Repeated runs vary a lot, so trust the job counts more than single fps numbers.
+  - **A rendering bug:** with `r_useVertexBuffers 0` (client-side vertex arrays) the lit
+    surfaces draw black (only some lights and the HUD show). Compare item 5, the same kind of
+    failure in software Mesa.
+
 ### 11. Mesa v3d: a refused BO allocation crashes the program
 - Whenever `CREATE_BO` fails (the full area of item 2), riscos-mesa goes on to use the missing
   buffer: once a data abort in `mgpu_v3d_bo_map` reading freed memory (r6 = &FDFDFDFD), once
