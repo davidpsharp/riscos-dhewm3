@@ -24,6 +24,7 @@ had (section 3).
 | 8 | `RISC3D$Disable` is ignored | RISC3D client library | Not retested (0.17 notes: client library unchanged) | Minor |
 | 9 | SDL fails in a numbered screen mode | riscos-mesa's SDL | Not retested | Minor |
 | 10 | Software Mesa: immediate-mode draws write nothing after a VBO + ARB-program draw | riscos-mesa 20.3.5 | Not retested | Software fallback only |
+| 11 | GL windows garbled on a 16 bpp desktop (found by riscos-mupen64plus) | riscos-mesa (SDL/EGL presentation) | Seen with dhewm3 on RoMac, both SDLs | Unplayable at 64K colours |
 
 **With only issue 1 patched (handles raised to 16,384), V3DRender 0.26 runs Doom 3's first
 level with 0 GPU resets and 0 MMU errors.**
@@ -41,6 +42,8 @@ level with 0 GPU resets and 0 MMU errors.**
 - **The GL check program:** `tests/d3gltest` in this repo. It checks each GL feature dhewm3's
   renderer uses by reading pixels back (ARB programs, VBOs, two-sided and separate stencil,
   depth bounds, S3TC, blending), then times a benchmark.
+- **SDL:** this port's build of riscos-mesa's SDL with input and window patches; none touch
+  the GL path. Checked against riscos-mesa's own SDL in "Which SDL this port uses".
 - **Tools:** `*V3DRender`, `V3DM$Stats`, `V3DM$Why`, and the game's own `com_speeds` (per frame:
   game, front end and back end ms).
 
@@ -209,14 +212,49 @@ Details are in `docs/risc3d-issues.md` (items 1, 4 and 5 there):
 - `*V3DRender`'s "last:" MMU error line printed garbage for the client name in 0.16; 0.22's
   changelog fixes it, and 0.26 printed "client CLE".
 
-## Not tested here: 16 bpp (64K colour) desktops
+## 16 bpp (64K colour) desktops: GL windows are garbled
 
-Every test above ran on a 32 bpp desktop. The riscos-mupen64plus port reports (23 Nov 2026)
-that on a 64K colour desktop every GL window through riscos-mesa's SDL/EGL is garbled: each
-32-bit pixel lands as two 16-bit pixels, so the window shows the left half of the frame at
-double width in the wrong colours. They saw it on the Pi 4 GPU (0.16 and 0.26), in software
-Mesa and on RoMac. Details and a test program (gl16) are in that port's report, item 1. dhewm3
-uses the riscos-quake3 port's SDL rather than riscos-mesa's, and hasn't been tried at 16 bpp yet.
+The riscos-mupen64plus port reported (23 Nov 2026) that on a 64K colour desktop every GL
+window through riscos-mesa's SDL/EGL is garbled: each 32-bit pixel lands as two 16-bit
+pixels, so the window shows the left half of the frame at double width in the wrong colours.
+They saw it on the Pi 4 GPU (0.16 and 0.26), in software Mesa and on RoMac. Details and a test
+program (gl16) are in that port's report, item 1.
+
+**dhewm3 has it too:** on RoMac at 1024x768 in 64K colours, the main menu is garbled exactly
+that way. It's the same with this port's SDL and with riscos-mesa's own (next section). Every
+other test in this report ran on a 32 bpp desktop.
+
+## Which SDL this port uses, and riscos-mesa's own SDL
+
+This port links its own build of SDL 2.32.10 (`riscos/sdl2`), not the devkit's `libSDL2.a`.
+It is riscos-mesa's SDL source (the overlay at riscos-mesa 2df5c85, unchanged, the latest),
+plus eight patches shared with the riscos-quake3 port.
+
+**None of the patches touch SDL's GL path (`SDL_riscosopengl.c`) or its audio.** So nothing in
+sections 1-7 depends on them. They change only:
+
+| Patch | What it does | Matters for |
+|---|---|---|
+| 01 | RISC OS 5 sprite mode words: the eigen factors for SDL's software (non-GL) framebuffer | 16 bpp software windows, not GL |
+| 02 | Icon bar menu with Info and Help | Looks only |
+| 03 | The application directory as the program's name | Looks only |
+| 04 | RoMac's absolute pointer (RoMac before 0.1.228) | Mouse look on older RoMac |
+| 05 | After a mode change: window kept on screen, first mouse reading dropped | Full screen mode changes |
+| 06 | Mouse look in screen pixels, not window pixels | Mouse-look speed at a reduced render size |
+| 07, 08 | The first reading after relative mode starts isn't a move; the pointer is centred on a whole pixel | 08 fixes a drift that 06 introduced; riscos-mesa's SDL has no drift |
+
+**Tested with riscos-mesa's SDL** (the devkit's `libSDL2.a`, 20.3.5-22), on RoMac, 32 bpp,
+Mars City 1, 23 Nov 2026:
+- it starts, opens the 800x600 window through RISC3D ("Apple M3 Pro (RISC3D, Linux GPU)"),
+  and plays the level at the same ~35-60 fps as with this port's SDL;
+- mouse look works: a 150-pixel move turned the view and the pointer was re-centred;
+- at 16 bpp it's garbled exactly as with this port's SDL (above);
+- one frame during the intro cinematic showed horizontal shearing (tearing). Frames in play
+  didn't, and a comparison with this port's SDL wasn't conclusive, so it isn't counted as a
+  difference.
+
+Not yet tried on the Pi 4 with riscos-mesa's SDL. Nothing in the GL path differs, so the
+frame rates and GPU findings shouldn't change.
 
 ## Files in this repo
 
@@ -231,4 +269,5 @@ with the 16k handle limits, and a `Load` Obey file that runs DAClamp first) and 
 - `tests/v3drender/build-module.sh`: builds the module alone with GCCSDK.
 - `tests/v3drender/logs/`: the decoded `*V3DDump` from issue 3, and register logs.
 - `tests/d3gltest/`: the GL check program.
+- `riscos/sdl2/patches/`: this port's SDL patches (see "Which SDL this port uses").
 - `docs/risc3d-issues.md`: the running log of every item, with dates and evidence.
