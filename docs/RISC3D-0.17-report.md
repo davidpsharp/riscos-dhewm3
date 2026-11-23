@@ -209,6 +209,15 @@ Details are in `docs/risc3d-issues.md` (items 1, 4 and 5 there):
 - `*V3DRender`'s "last:" MMU error line printed garbage for the client name in 0.16; 0.22's
   changelog fixes it, and 0.26 printed "client CLE".
 
+## Not tested here: 16 bpp (64K colour) desktops
+
+Every test above ran on a 32 bpp desktop. The riscos-mupen64plus port reports (23 Nov 2026)
+that on a 64K colour desktop every GL window through riscos-mesa's SDL/EGL is garbled: each
+32-bit pixel lands as two 16-bit pixels, so the window shows the left half of the frame at
+double width in the wrong colours. They saw it on the Pi 4 GPU (0.16 and 0.26), in software
+Mesa and on RoMac. Details and a test program (gl16) are in that port's report, item 1. dhewm3
+uses the riscos-quake3 port's SDL rather than riscos-mesa's, and hasn't been tried at 16 bpp yet.
+
 ## Files in this repo
 
 The **v0.1.0 release** on GitHub has the binaries used for this report:
