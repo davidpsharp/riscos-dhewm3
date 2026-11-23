@@ -11,8 +11,9 @@ For Andrew Youll. 23 November 2026. One page; each item links to the evidence.
 | [Mupen64Plus](https://github.com/davidpsharp/riscos-mupen64plus) | Yes | Super Mario 64 at 163-169 VI/s (full speed is 60; software: 12-15) |
 | [Doom 3 (dhewm3)](https://github.com/davidpsharp/riscos-dhewm3) | Only with item 2 fixed | ~12 fps 800x600, Medium |
 
-All three need DAClamp to have run before V3DRender loaded (item 1). Each repo's latest release
-has the binaries we tested, as RISC OS zips. This page is the summary; each port's repo keeps
+All three need DAClamp to have run before V3DRender loaded (item 1). The binaries we tested are
+on each repo's Releases page as RISC OS zips (Doom 3 and Mupen64Plus: v0.1.0; Quake 3: the
+risc3d-preview2 pre-release). This page is the summary; each port's repo keeps
 only its own evidence, linked below.
 
 **Thank you for 0.23** ("imported BOs follow pages the OS moves"): it cured the GPU hangs and
