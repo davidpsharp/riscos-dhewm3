@@ -1,4 +1,5 @@
 #!/bin/bash
+# RISC OS port, copyright David Sharp 2026. GPL-3.0 (see dhewm3/COPYING.txt).
 # Builds only V3DRender's module (the module part of its build.sh), in doom3-riscos.
 set -euo pipefail
 cd /work/build/v3drender/src

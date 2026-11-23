@@ -1,4 +1,5 @@
 #!/bin/sh
+# RISC OS port, copyright David Sharp 2026. GPL-3.0 (see dhewm3/COPYING.txt).
 # Builds d3gltest for RISC OS (static, with the Pi 4 GPU library):
 #   riscos/sdk.sh tests/d3gltest/build.sh
 # Output: build/d3gltest/d3gltest,ff8 (AIF) and d3gltest.elf (with symbols).

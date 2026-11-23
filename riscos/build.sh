@@ -1,4 +1,5 @@
 #!/bin/sh
+# RISC OS port, copyright David Sharp 2026. GPL-3.0 (see dhewm3/COPYING.txt).
 # Builds dhewm3 for RISC OS in the doom3-riscos Docker image:
 #   riscos/sdk.sh riscos/build.sh [build type] [extra cmake args]
 # Output: build/riscos/dhewm3 (ELF with symbols).

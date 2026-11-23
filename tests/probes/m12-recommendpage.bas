@@ -1,3 +1,4 @@
+REM RISC OS port, copyright David Sharp 2026. GPL-3.0 (see dhewm3/COPYING.txt).
 REM OS_Memory 12 with bit 9 (1 GB to 4 GB), then OS_Memory 0: page number to physical address
 DIM b% 12
 size%=4096

@@ -1,4 +1,5 @@
 #!/bin/sh
+# RISC OS port, copyright David Sharp 2026. GPL-3.0 (see dhewm3/COPYING.txt).
 # Makes build/riscos/app/!dhewm3 from build/riscos/dhewm3 and the launcher, in the doom3-riscos
 # image:
 #   riscos/sdk.sh riscos/package.sh

@@ -1,4 +1,5 @@
 #!/bin/sh
+# RISC OS port, copyright David Sharp 2026. GPL-3.0 (see dhewm3/COPYING.txt).
 # Builds SDL 2.32.10 for RISC OS: upstream's source, riscos-mesa's RISC OS overlay
 # (overlay/, a copy: see overlay/SOURCE) and then this port's own fixes (patches/,
 # which should go to riscos-mesa in time). Run inside the doom3-riscos image:

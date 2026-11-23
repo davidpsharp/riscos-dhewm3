@@ -1,4 +1,5 @@
 #!/bin/sh
+# RISC OS port, copyright David Sharp 2026. GPL-3.0 (see dhewm3/COPYING.txt).
 # dhewm3 against the riscos-mesa devkit's own libSDL2.a (no riscos/sdl2 patches), in build/riscos-stocksdl.
 set -e
 # Run: riscos/sdk.sh tests/sdl/build-stocksdl.sh

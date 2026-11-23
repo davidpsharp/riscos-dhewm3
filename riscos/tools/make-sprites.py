@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# RISC OS port, copyright David Sharp 2026. GPL-3.0 (see dhewm3/COPYING.txt).
 """Make the !dhewm3 application sprites from riscos/icons/dhewm3-icon.png (adapted from the OpenTS port).
 
 Writes two RISC OS sprite files (filetype &FF9) of 32-bit sprites with a mask, each holding

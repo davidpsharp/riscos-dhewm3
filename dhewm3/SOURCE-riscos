@@ -1,2 +1,14 @@
 github.com/dhewm/dhewm3 at 505c5c8 (9 Nov 2026, "README: Add note about not playing online"), GPL-3.0 with id's additional terms (COPYING.txt).
-RISC OS changes are marked __riscos__ (C/C++) or RISCOS (CMake).
+RISC OS changes are marked __riscos__ in the C/C++ sources. These upstream files have them
+(copyright David Sharp 2026, GPL-3.0; no notice is added to id's and dhewm3's own files):
+  neo/framework/Compressor.cpp
+  neo/idlib/Lib.cpp
+  neo/renderer/Image_files.cpp
+  neo/renderer/Image_load.cpp
+  neo/renderer/Model.cpp
+  neo/sys/events.cpp
+  neo/sys/linux/main.cpp
+  neo/sys/platform.h
+  neo/sys/posix/posix_main.cpp
+  neo/sys/posix/posix_net.cpp
+The rest of the port (riscos/, tests/, tools/) is new and carries the notice in its first line.

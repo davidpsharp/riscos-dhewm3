@@ -40,6 +40,8 @@ GCCSDK cross-compiler in Docker (image `doom3-riscos`, with riscos-mesa's devkit
 
 ## Licences
 dhewm3 is GPL-3.0 (see `dhewm3/COPYING.txt`), with id Software's additional terms. The
-launcher and port code are under the same licence. V3DRender (in the release's test module)
+launcher and port code are under the same licence. Files that are new in the port carry
+"RISC OS port, copyright David Sharp 2026" in their first line; `dhewm3/SOURCE-riscos` lists
+the dhewm3 files it changed. V3DRender (in the release's test module)
 is GPL-2.0-or-later; its change is `tests/v3drender/v026-16k.patch`. Doom 3's data is id
 Software's and isn't distributed here.

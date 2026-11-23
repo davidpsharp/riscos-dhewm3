@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# RISC OS port, copyright David Sharp 2026. GPL-3.0 (see dhewm3/COPYING.txt).
 """Reads dhewm3's RISC OS profile (pairs of PC, LR words; see sys/linux/main.cpp) and prints
 where the main thread was, by function (from `nm -n -C` output) and by caller."""
 import bisect, collections, struct, sys

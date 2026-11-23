@@ -1,3 +1,4 @@
+/* RISC OS port, copyright David Sharp 2026. GPL-3.0 (see dhewm3/COPYING.txt). */
 /* SHA-256 (FIPS 180-4), small and incremental, for checking downloads. */
 #ifndef LAUNCHER_SHA256_H
 #define LAUNCHER_SHA256_H

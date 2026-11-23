@@ -1,3 +1,4 @@
+/* RISC OS port, copyright David Sharp 2026. GPL-3.0 (see dhewm3/COPYING.txt). */
 /*
  * dhewm3 for RISC OS: the launcher (!dhewm3.!RunImage).
  *

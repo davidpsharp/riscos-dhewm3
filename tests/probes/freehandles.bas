@@ -1,3 +1,4 @@
+REM RISC OS port, copyright David Sharp 2026. GPL-3.0 (see dhewm3/COPYING.txt).
 REM Counts how many more files can be opened (FileSwitch handles), then closes them again
 DIM h%(300)
 n%=0

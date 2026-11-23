@@ -1,3 +1,4 @@
+| RISC OS port, copyright David Sharp 2026. GPL-3.0 (see dhewm3/COPYING.txt).
 | Game for dhewm3: run by the launcher (!RunImage) to start the game in a desktop window.
 | Its arguments go to dhewm3 (+set ..., +map ...). Output goes to stdout and stderr here.
 RMEnsure PThreadTicker 0.03 RMLoad <dhewm3$Dir>.PThrTicker

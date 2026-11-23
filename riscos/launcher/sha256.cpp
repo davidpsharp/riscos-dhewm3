@@ -1,3 +1,4 @@
+/* RISC OS port, copyright David Sharp 2026. GPL-3.0 (see dhewm3/COPYING.txt). */
 /* SHA-256 (FIPS 180-4), written for the dhewm3 RISC OS launcher. */
 #include "sha256.h"
 #include <stdio.h>

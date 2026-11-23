@@ -1,4 +1,5 @@
 #!/bin/sh
+# RISC OS port, copyright David Sharp 2026. GPL-3.0 (see dhewm3/COPYING.txt).
 # riscos-doom3's own RoMac (risc3d build), for testing through Rorth (target romac-doom3).
 #
 #   tools/romac-run start [--window]   boot it in the background (no window unless --window)

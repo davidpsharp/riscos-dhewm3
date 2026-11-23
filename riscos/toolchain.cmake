@@ -1,3 +1,4 @@
+# RISC OS port, copyright David Sharp 2026. GPL-3.0 (see dhewm3/COPYING.txt).
 # CMake toolchain for dhewm3 on RISC OS 5 (ARMv7 + NEON: RoMac, RISC OS on Linux, Pi 2 and
 # later): riscos-crossdev's toolchain file plus the riscos-mesa devkit's SDL2 and OpenAL.
 include($ENV{RCD_DIR}/cmake/riscos.cmake)

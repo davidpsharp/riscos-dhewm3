@@ -1,3 +1,4 @@
+/* RISC OS port, copyright David Sharp 2026. GPL-3.0 (see dhewm3/COPYING.txt). */
 /* Force-included in every dhewm3 C and C++ file for RISC OS (riscos/toolchain.cmake). */
 #ifndef RISCOS_COMPAT_H
 #define RISCOS_COMPAT_H

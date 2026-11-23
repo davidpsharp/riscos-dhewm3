@@ -1,3 +1,4 @@
+REM RISC OS port, copyright David Sharp 2026. GPL-3.0 (see dhewm3/COPYING.txt).
 REM Claims pages at different PMP page indexes (as V3DRender's BO area does), to see where claims fail
 pages%=65536
 SYS "XOS_DynamicArea",0,-1,0,-1,(1<<7) OR (1<<8) OR (1<<20),pages%*4096,0,-1,"PMP probe",pages% TO e%,da%,,base%;f%

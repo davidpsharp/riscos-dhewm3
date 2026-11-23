@@ -1,4 +1,5 @@
 #!/bin/sh
+# RISC OS port, copyright David Sharp 2026. GPL-3.0 (see dhewm3/COPYING.txt).
 # Builds the launcher (!dhewm3.!RunImage) in the doom3-riscos image:
 #   riscos/sdk.sh riscos/launcher/build.sh
 # Output: build/launcher/launcher,ff8 (AIF) and launcher.elf (with symbols).

@@ -1,3 +1,4 @@
+/* RISC OS port, copyright David Sharp 2026. GPL-3.0 (see dhewm3/COPYING.txt). */
 /* d3gltest: does this GL do what dhewm3's renderer needs?
  *
  * dhewm3 draws only through its ARB2 back end (renderer/draw_arb2.cpp): ARB vertex and

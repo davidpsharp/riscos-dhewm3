@@ -1,3 +1,4 @@
+REM RISC OS port, copyright David Sharp 2026. GPL-3.0 (see dhewm3/COPYING.txt).
 REM Prints the free pool and every dynamic area of 4 MB or more (size of max, MB)
 SYS "OS_ReadDynamicArea",6 TO ,fp%
 PRINT "free pool ";fp% DIV 1048576;" MB"
