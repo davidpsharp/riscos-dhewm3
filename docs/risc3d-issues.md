@@ -85,7 +85,14 @@ Outputs kept in `build/d3gltest/*.out`.
     use, 0 resets, 0 MMU errors.
   - Suggestion: create the area at a size the OS allows (read the cap, or lift it with
     `OS_DynamicArea 8` as DAClamp does), and say so in `*V3DRender` when the area is smaller
-    than `V3DRender$Size`. Until then, a game can't fix this itself: the area exists from boot.
+    than `V3DRender$Size`. A game can't fix this itself once booted (the area
+    exists from boot), **but install order can** (riscos-n64, 23 Nov 2026): with riscos-mesa's
+    !MesaLibs in `$.!Boot.Resources`, its !Boot runs DAClamp before !RISC3D (Resources boot in
+    name order) loads V3DRender, so stock 0.16 gets its full 256 MB after a clean restart.
+    Mupen64Plus on plato: 0 BO errors with !MesaLibs, BO errors and a crash without. plato had
+    no !MesaLibs because the GPU test programs link riscos-mesa statically. It now has it.
+    Still worth fixing in V3DRender (or making !RISC3D run DAClamp), since a static-linked
+    program can't rely on !MesaLibs being installed.
 - **With bottomup, dhewm3 reaches its main menu on the Pi 4's GPU**, but loading
   demo_mars_city1 at Ultra quality gets 292 "Failed to allocate device memory for BO". Mesa then
   crashes in `mgpu_v3d_bo_map`, reading through freed memory (r6 = &FDFDFDFD, `ldr r0,[r6,#&754]`).
