@@ -1,0 +1,29 @@
+diff --git a/core/v3d.h b/core/v3d.h
+index a636b21..372a455 100644
+--- a/core/v3d.h
++++ b/core/v3d.h
+@@ -57,9 +57,9 @@ enum v3d_bank { V3D_BANK_HUB, V3D_BANK_CORE0, V3D_BANK_SMS, V3D_BANK_BRIDGE, V3D
+ 
+ /* Sizes (fixed tables: nothing is allocated with interrupts off) */
+ #define V3D_MAX_FILES 32
+-#define V3D_MAX_HANDLES 4096		/* per file */
++#define V3D_MAX_HANDLES 16384		/* per file */
+ #define V3D_MAX_SYNCOBJS 256		/* per file */
+-#define V3D_MAX_BOS 8192
++#define V3D_MAX_BOS 16384
+ #define V3D_MAX_JOBS 256
+ #define V3D_MAX_JOB_BOS 4096
+ #define V3D_JOB_FEW_BOS 48		/* BO lists this short are kept in the job */
+diff --git a/riscos/header.s b/riscos/header.s
+index dea3e8c..734d062 100644
+--- a/riscos/header.s
++++ b/riscos/header.s
+@@ -28,7 +28,7 @@ module_start:
+ 	.word	flags - module_start
+ 
+ title:	.asciz	"V3DRender"
+-help:	.asciz	"V3DRender\t0.26 (22 Nov 2026) Pi 4 GPU driver (V3D 4.2), after Linux's v3d"
++help:	.asciz	"V3DRender\t0.26 (22 Nov 2026) Pi 4 GPU driver (V3D 4.2), 16k handles test"
+ swi_names:
+ 	.asciz	"V3DRender\0Info\0Open\0Close\0Ioctl\0Reset\0Debug\0"
+ 	.align	2

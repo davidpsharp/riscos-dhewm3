@@ -3,7 +3,7 @@
 set -euo pipefail
 cd /work/build/v3drender/src
 mkdir -p out/obj
-CORE="core/v3d_hw.c core/v3d_sched.c core/v3d_bo.c core/v3d_ioctl.c"
+CORE="core/v3d_hw.c core/v3d_sched.c core/v3d_bo.c core/v3d_ioctl.c core/v3d_2d.c"
 INC="-Iinclude -Icore -Icore/compat"
 T=/opt/riscos-crossdev/toolchain/env/bin/arm-riscos-gnueabihf-
 MC="-std=gnu11 -O2 -marm -march=armv7-a -mno-unaligned-access -fpie -fvisibility=hidden \
@@ -13,7 +13,7 @@ MC="-std=gnu11 -O2 -marm -march=armv7-a -mno-unaligned-access -fpie -fvisibility
 ML="-nostdlib -static -Wl,--no-dynamic-linker -Wl,-T,common/module.ld -Wl,--build-id=none -Wl,-z,norelro"
 ${T}as -I common -o out/obj/header.o riscos/header.s
 objs="out/obj/header.o"
-for c in common/cmodule.c riscos/module.c riscos/plat_pi4.c $CORE; do
+for c in common/cmodule.c riscos/module.c riscos/plat_pi4.c riscos/twod.c $CORE; do
   o=out/obj/$(basename "${c%.c}").o
   ${T}gcc $MC -c -o "$o" "$c"
   objs="$objs $o"

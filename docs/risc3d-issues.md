@@ -11,6 +11,24 @@ Outputs kept in `build/d3gltest/*.out`.
 
 ## Bugs
 
+
+## RISC3D 0.17 (V3DRender 0.26), tested 23 Nov 2026 on pi4-socrates
+Loaded by hand after DAClamp (`$.code.!RISC3D`), 32 bpp desktop, dhewm3 at Medium, 800x600.
+- **Item 8 (hangs, frozen window): fixed by 0.23** ("imported BOs follow pages the OS moves").
+  0.26 still claims specific pages, but with only item 7 patched (`tests/v3drender/v026-16k.patch`)
+  dhewm3 plays Mars City 1 with 0 resets and 0 MMU errors, the window updating, ~12 fps, 3 render
+  jobs a frame. 126 MB of BOs in use, 16 MB kept for reuse.
+- **Item 7 (4,096 handles): not fixed, now the only blocker.** Stock 0.26: right after the
+  level loads, 14,772 "Failed to allocate device memory for BO", then 114 GPU resets, 1,137 MMU
+  errors (last: client CLE, page address &00000008) and dhewm3 crashes (item 11).
+- **Item 2 (128 MB cap):** unchanged in V3DRender; fine when DAClamp (or !MesaLibs at boot) runs
+  first.
+- **Item 3:** fixed in 0.22 (per its changelog).
+- **Item 6 (stencil two-side swapped):** still there: d3gltest 13 passed, 4 failed (the same 4),
+  0 MMU errors, 102 fps.
+- **Items 10 and 11 (frame copy through the CPU; Mesa crash on a refused BO):** Mesa's, not
+  touched by this release.
+
 ### 1. `RISC3D$Disable` is ignored (client library, `lib/r3d_gl.c`, `r3d_available`)
 - **Seen:** RoMac (Linux3D), 2026-11-22. With `*Set RISC3D$Disable 1` (set globally, or in
   the Obey file that starts the program), GL_RENDERER is still "Apple M3 Pro (RISC3D, Linux
