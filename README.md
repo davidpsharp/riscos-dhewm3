@@ -4,6 +4,10 @@ Doom 3 for RISC OS 5: a port of [dhewm3](https://github.com/dhewm/dhewm3) 1.5.5 
 Doom 3 engine), drawing through Andrew Youll's RISC3D (Linux3D under RoMac / RISC OS on
 Linux; V3DRender on a native Raspberry Pi 4).
 
+![Doom 3 in an 800x600 window on RoMac: the Mars City hangar](https://github.com/davidpsharp/riscos-dhewm3/releases/download/v0.1.0/riscos-dhewm3-romac-mars-city-hangar.png)
+
+*dhewm3 in a window on RoMac (RISC OS on a Mac, through RISC3D), Mars City hangar, about 30 fps.*
+
 **Status (23 November 2026):**
 - **RoMac:** plays in a window, about 30 fps.
 - **Pi 4:** plays Mars City 1 at about 11-15 fps (800x600, Medium). It needs V3DRender's
