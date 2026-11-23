@@ -1,8 +1,11 @@
-# RISC3D issues queued for Andy
+# RISC3D issues: working log
 
-Found while porting dhewm3 (and, where credited, by the ioquake3 port's session). David
-passes these on; nobody here contacts Andy directly. Newest at the bottom of each section;
-mark an item **sent** with the date when David has passed it on.
+**For RISC3D's author: read [RISC3D-for-Andy.md](RISC3D-for-Andy.md) instead.** This is the
+port's working log, kept for its dates and evidence; the summary and
+[RISC3D-0.17-report.md](RISC3D-0.17-report.md) supersede it.
+
+Found while porting dhewm3 (and, where credited, by the ioquake3 port's session). Newest at
+the bottom of each section.
 
 Test program: `tests/d3gltest` (this repo). It checks each GL feature dhewm3's renderer uses
 by reading pixels back, and times round trips. Build: `riscos/sdk.sh tests/d3gltest/build.sh`
@@ -178,7 +181,7 @@ Loaded by hand after DAClamp (`$.code.!RISC3D`), 32 bpp desktop, dhewm3 at Mediu
   buffer, two-sided and ATI stencil (z-pass and z-fail), S3TC DXT1, and additive blending. The
   benchmark runs at 320 fps for 64 interaction quads at 256x256.
 
-## For David, not Andy
+## Not RISC3D: Rorth under RoMac
 - **Rorth under RoMac:** with crash dumps on, every GCC 10 program dies with "EMT trap" at
   start, which is Rorth#11's symptom. The 0.15 fix restores DFAR/DFSR only on ARMv6+ hardware,
   and on RISC OS on Linux data aborts arrive by another route.

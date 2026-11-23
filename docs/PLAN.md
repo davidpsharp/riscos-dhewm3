@@ -85,7 +85,7 @@ libMesaGPU.
 - **Harness:** Rorth runs inside a RoMac of this project's own (`tools/romac-run`, target
   `romac-doom3`, headless, no window). Its disc is the git-ignored `romac/data/hd4`, so files
   are copied straight in, not sent through Rorth. It needs:
-  - `crashdumps off` (see `docs/risc3d-issues.md`, "For David");
+  - `crashdumps off` (see `docs/risc3d-issues.md`, "Not RISC3D: Rorth under RoMac");
   - a 16M-colour mode before any SDL program starts (`*WimpMode X1024 Y768 C16M`).
 - **Toolchain:** `riscos/docker` = crossdev 1.11 + riscos-mesa devkit 20.3.5-22 (libMesaGPU),
   the same as the ioquake3 port's r3d image.

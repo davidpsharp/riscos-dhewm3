@@ -1,6 +1,7 @@
 # Doom 3 (dhewm3) on RISC3D 0.17: performance and issues
 
-For Andrew Youll, from the riscos-dhewm3 port. 23 November 2026.
+For Andrew Youll, from the riscos-dhewm3 port. 23 November 2026. This is the Doom 3 evidence
+behind the one-page summary, [RISC3D-for-Andy.md](RISC3D-for-Andy.md); start there.
 
 dhewm3 1.5.5 (the GPL Doom 3 engine) now plays on a native Raspberry Pi 4 through RISC3D,
 V3DRender and riscos-mesa's libMesaGPU (Mesa 26.1.6 v3d). This report covers what we saw with
@@ -131,8 +132,8 @@ Back-to-back runs vary by up to ±30%, so job counts are firmer than single fps 
 game, 12-15 ms the front end. Full screen is no faster than a window. Turning off shadows
 changes nothing.
 
-For context, the riscos-quake3 port on the same patched V3DRender reported Quake 3 at 138 fps
-at 480x300 (software: 35), 72 fps at 1024x768, and 45 fps at 1680x1050 full screen.
+For context, Quake 3 on stock 0.17 on the same Pi runs at 138 fps at 480x300 (software: 35),
+77 fps at 1024x768 and 69 fps at 1280x800 full screen (riscos-quake3).
 
 ### What splits Doom 3's frames into jobs
 `V3DM$Why` per frame in play (0.16 + patches), before the port's changes:
@@ -197,7 +198,7 @@ dhewm3 prefers glStencilOpSeparate, so it doesn't affect the game.
 
 ## 8-10. Older items, not retested on 0.17
 
-Details are in `docs/risc3d-issues.md` (items 1, 4 and 5 there):
+From the working log, `docs/risc3d-issues.md` (items 1, 4 and 5 there):
 - **`RISC3D$Disable` is ignored:** `r3d_available` tests `!_swix(OS_ReadVarVal, ...)`, but with
   R2 < 0 OS_ReadVarVal returns an error (V set) when the variable *exists*, so the check never
   fires. The host stand-in returns no error, so the tests miss it.
@@ -253,8 +254,12 @@ Mars City 1, 23 Nov 2026:
   didn't, and a comparison with this port's SDL wasn't conclusive, so it isn't counted as a
   difference.
 
-Not yet tried on the Pi 4 with riscos-mesa's SDL. Nothing in the GL path differs, so the
-frame rates and GPU findings shouldn't change.
+**On the Pi 4** (pi4-socrates, V3DRender 0.26 with 16k handles, 32 bpp, 23 Nov 2026), riscos-mesa's
+SDL gives the same as this port's: ~11.7-11.9 fps in play in the same hangar view (ours: 11.7),
+no drift with the mouse still, and a 150-pixel move turns the view with the pointer re-centred.
+`V3DM$Why` showed 3 render jobs a frame with it (measured in the intro cinematic), as with
+ours in play. So the speed and GPU findings above don't
+depend on this port's SDL patches.
 
 ## Files in this repo
 
@@ -270,4 +275,4 @@ with the 16k handle limits, and a `Load` Obey file that runs DAClamp first) and 
 - `tests/v3drender/logs/`: the decoded `*V3DDump` from issue 3, and register logs.
 - `tests/d3gltest/`: the GL check program.
 - `riscos/sdl2/patches/`: this port's SDL patches (see "Which SDL this port uses").
-- `docs/risc3d-issues.md`: the running log of every item, with dates and evidence.
+- `docs/risc3d-issues.md`: the working log of every item, with dates. You shouldn't need it.

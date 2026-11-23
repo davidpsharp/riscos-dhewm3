@@ -10,9 +10,9 @@ Linux; V3DRender on a native Raspberry Pi 4).
   buffer handle limits raised (the test module in the release).
 - **RISC OS on Linux:** not yet tried.
 
-The issues found along the way, for RISC3D's author, are in
-[docs/RISC3D-0.17-report.md](docs/RISC3D-0.17-report.md) (summary and performance) and
-[docs/risc3d-issues.md](docs/risc3d-issues.md) (the running log). The plan is in
+The issues found along the way, for RISC3D's author, are summarised for all three ports in
+[docs/RISC3D-for-Andy.md](docs/RISC3D-for-Andy.md); the Doom 3 evidence is in
+[docs/RISC3D-0.17-report.md](docs/RISC3D-0.17-report.md). The plan is in
 [docs/PLAN.md](docs/PLAN.md).
 
 **No game data is included.** The icon bar launcher downloads id Software's Doom 3 demo on
