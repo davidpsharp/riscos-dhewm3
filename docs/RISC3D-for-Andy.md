@@ -9,7 +9,7 @@ For Andrew Youll. 23 November 2026. One page; each item links to the evidence.
 |---|---|---|
 | [Quake 3 (ioquake3)](https://github.com/davidpsharp/riscos-quake3) | Yes | 138 fps 480x300, 77 fps 1024x768, 69 fps 1280x800 full screen (software Mesa: 35) |
 | [Mupen64Plus](https://github.com/davidpsharp/riscos-mupen64plus) | Yes | Super Mario 64 at 163-169 VI/s (full speed is 60; software: 12-15) |
-| [Doom 3 (dhewm3)](https://github.com/davidpsharp/riscos-dhewm3) | Only with item 2 fixed | ~12 fps 800x600, Medium |
+| [Doom 3 (dhewm3)](https://github.com/davidpsharp/riscos-dhewm3) | Yes, on 0.22 (on 0.17 it needed item 2 fixed) | ~12 fps in the hangar, 800x600, Medium. Loads slowly: about 25 minutes to the first map on pi4-socrates |
 
 All three need DAClamp to have run before V3DRender loaded (item 1). The binaries we tested are
 on each repo's Releases page as RISC OS zips (Doom 3 and Mupen64Plus: v0.1.0; Quake 3: the
@@ -20,10 +20,12 @@ only its own evidence, linked below.
 - **Quake 3** (its own retest on pi4-plato, no workarounds): `vid_restart` still aborts with "wait
   failed: -9", and restarting SDL video still gives "Mesa OffScreen" (software). Both are probably
   fixed in the unreleased riscos-mesa 20.3.5-24. Its banded screenshots are fixed by PRESENT.
-- **Doom 3** (pi4-socrates): a 64K-colour desktop still garbles GL windows (item 4 below). In a
-  16M-colour desktop the window draws correctly. The first map's load hit a heap crash in the
-  -23 build (`idBTree::Add` from the allocator), and a -22 build failed at start-up with "EMT
-  trap". We haven't got Doom 3 to play on 0.22 yet.
+- **Doom 3** (pi4-socrates, 0.22 with riscos-mesa devkit 20.3.5-22): it plays the first map,
+  about 12 fps in the hangar. Its map load is slow (about 25 minutes at 2.4 fps). A -23 build hit
+  a heap crash in `idBTree::Add` during the load, and the -22 build failed at start-up with
+  "EMT trap" until Rorth's crash-dump hook was turned off. Screenshots mid-play showed stripes,
+  like the bands in item 4. A 64K-colour desktop still garbles GL windows (item 4 below); a
+  16M-colour desktop draws correctly.
 
 **Thank you for 0.23** ("imported BOs follow pages the OS moves"): it cured the GPU hangs and
 frozen windows Doom 3 had with 0.16.
