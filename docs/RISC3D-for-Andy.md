@@ -16,6 +16,15 @@ on each repo's Releases page as RISC OS zips (Doom 3 and Mupen64Plus: v0.1.0; Qu
 risc3d-preview2 pre-release). This page is the summary; each port's repo keeps
 only its own evidence, linked below.
 
+**Retest, 25 November, on RISC3D 0.22 (V3DRender 0.37) and riscos-mesa 20.3.5-23:**
+- **Quake 3** (its own retest on pi4-plato, no workarounds): `vid_restart` still aborts with "wait
+  failed: -9", and restarting SDL video still gives "Mesa OffScreen" (software). Both are probably
+  fixed in the unreleased riscos-mesa 20.3.5-24. Its banded screenshots are fixed by PRESENT.
+- **Doom 3** (pi4-socrates): a 64K-colour desktop still garbles GL windows (item 4 below). In a
+  16M-colour desktop the window draws correctly. The first map's load hit a heap crash in the
+  -23 build (`idBTree::Add` from the allocator), and a -22 build failed at start-up with "EMT
+  trap". We haven't got Doom 3 to play on 0.22 yet.
+
 **Thank you for 0.23** ("imported BOs follow pages the OS moves"): it cured the GPU hangs and
 frozen windows Doom 3 had with 0.16.
 
