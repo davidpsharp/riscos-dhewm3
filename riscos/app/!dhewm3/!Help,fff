@@ -50,7 +50,8 @@ To see the frame rate: open the console (Shift+Esc), type  com_showFPS 1
 and press Return.
 
 To play faster, turn off the shadows: in the console, type  r_shadows 0
-(about a third faster on a Pi 4: 13 to 18 frames a second in the hangar).
+(on a Pi 4 it runs a third to a half faster: 16.5 to 25 frames a second in
+the hangar).
 To keep it, add the line  set r_shadows 0  to
 !dhewm3.home.dhewm3.base.autoexec/cfg, outside the part !dhewm3 marks.
 r_skipSpecular 1 (no shiny highlights) gains a little more, about 1 frame
