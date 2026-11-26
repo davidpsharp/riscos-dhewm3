@@ -1812,19 +1812,35 @@ Sys_GenerateEvents
 ================
 */
 #ifdef __riscos__
-#include <kernel.h>
+#include <string.h>
+#include <swis.h>
+/* RISC OS port: system variables, read and set with the SWIs directly. */
+static bool RISCOS_ReadVar( const char *name, char *buf, int len ) {
+	int n;
+	if ( _swix( OS_ReadVarVal, _INR(0,4)|_OUT(2), name, buf, len - 1, 0, 3, &n ) )
+		return false;
+	buf[n] = 0;
+	return true;
+}
+static void RISCOS_SetVar( const char *name, const char *value ) {
+	_swix( OS_SetVarVal, _INR(0,4), name, value, (int)strlen( value ), 0, 0 );
+}
 /* RISC OS port: r_shadows follows the system variable dhewm3$Shadows ("on" or "off"),
    which the icon bar menu's Shadows item (SDL_RISCOS_MENU_OPTIONS) and the launcher
    change; and a change made in the console goes back into the variable, so that the
    menu's tick is right. Checked four times a second. */
 static void RISCOS_SyncShadows( void ) {
 	static int lastCheck, seenVar = -1, seenCvar = -1;
+	// Not until the game has started: Sys_GenerateEvents also runs during start-up, and
+	// changing r_shadows that early crashed the game on a Pi 4 (where the default is off).
+	if ( !common->IsInitialized() )
+		return;
 	int now = Sys_Milliseconds();
 	if ( now - lastCheck < 250 )
 		return;
 	lastCheck = now;
 	char value[8];
-	if ( _kernel_getenv( "dhewm3$Shadows", value, sizeof( value ) ) )
+	if ( !RISCOS_ReadVar( "dhewm3$Shadows", value, sizeof( value ) ) )
 		return;				// not set: r_shadows is the game's own
 	int var = idStr::Icmp( value, "on" ) == 0;
 	int cvar = cvarSystem->GetCVarBool( "r_shadows" );
@@ -1833,7 +1849,7 @@ static void RISCOS_SyncShadows( void ) {
 			cvarSystem->SetCVarBool( "r_shadows", var != 0 );
 		seenVar = seenCvar = var;
 	} else if ( cvar != seenCvar ) {
-		_kernel_setenv( "dhewm3$Shadows", cvar ? "on" : "off" );
+		RISCOS_SetVar( "dhewm3$Shadows", cvar ? "on" : "off" );
 		seenVar = seenCvar = cvar;
 	}
 }
