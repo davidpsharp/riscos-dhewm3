@@ -8,10 +8,13 @@ Linux; V3DRender on a native Raspberry Pi 4).
 
 *dhewm3 in a window on RoMac (RISC OS on a Mac, through RISC3D), Mars City hangar, about 30 fps.*
 
-**Status (23 November 2026):**
+**Status (26 November 2026):** at present the demo works but the full game's data does not. That is
+under investigation.
 - **RoMac:** plays in a window, about 30 fps.
 - **Pi 4:** plays Mars City 1 at about 11-15 fps (800x600, Medium). It needs V3DRender's
   buffer handle limits raised (the test module in the release).
+- **Full game data:** doesn't work yet. On a Pi 4 the full game loads (about four minutes) and then
+  crashes before the first frame.
 - **RISC OS on Linux:** not yet tried.
 
 The issues found along the way, for RISC3D's author, are summarised for all three ports in
@@ -20,7 +23,8 @@ The issues found along the way, for RISC3D's author, are summarised for all thre
 [docs/PLAN.md](docs/PLAN.md).
 
 **No game data is included.** The icon bar launcher downloads id Software's Doom 3 demo on
-request, checks it and shows id's licence. The full game's data can be used instead.
+request, checks it and shows id's licence. The full game's data can be copied in instead, but
+doesn't work yet (see Status).
 
 ## Download
 The releases page has `riscos-dhewm3-<version>.zip`, a RISC OS zip (types kept by SparkFS,
