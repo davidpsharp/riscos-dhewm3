@@ -49,6 +49,11 @@ package: it comes from id's archive when you ask for it.
 To see the frame rate: open the console (Shift+Esc), type  com_showFPS 1
 and press Return.
 
+To play faster, turn off the shadows: in the console, type  r_shadows 0
+(about a third faster on a Pi 4: 13 to 18 frames a second in the hangar).
+To keep it, add the line  set r_shadows 0  to
+!dhewm3.home.dhewm3.base.autoexec/cfg, outside the part !dhewm3 marks.
+
 
 The full game
 -------------
