@@ -13,8 +13,6 @@ It runs on:
 - a Raspberry Pi 4 running RISC OS 5.30, drawing on its GPU through RISC3D
   0.22 (V3DRender 0.37). The demo and the full game play at about 10 to 15
   frames a second in an 800 x 600 window. Tested on a 4 GB Pi 4;
-- RoMac (RISC OS on a Mac), drawing on the Mac's GPU, at about 30 frames a
-  second;
 - RISC OS on Linux, on a machine whose GPU Linux drives (not yet tested).
 
 You need !RISC3D (0.22 or later on a Pi 4) in !Boot.Resources, and
