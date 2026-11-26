@@ -1,0 +1,121 @@
+--- a/src/video/riscos/SDL_riscosevents.c
++++ b/src/video/riscos/SDL_riscosevents.c
+@@ -784,10 +784,66 @@
+    SDL_RISCOS_APP_PURPOSE, SDL_RISCOS_APP_AUTHOR, SDL_RISCOS_APP_PORTED_BY
+    and SDL_RISCOS_APP_VERSION. The blocks stay static: the Wimp reads them
+    for as long as the menu is open. */
+-enum { RISCOS_MENU_INFO, RISCOS_MENU_HELP, RISCOS_MENU_QUIT };
++enum { RISCOS_MENU_INFO, RISCOS_MENU_HELP, RISCOS_MENU_QUIT, RISCOS_MENU_OPTION };
+ 
+-static int riscos_iconbar_menu[7 + 3 * 6];
+-static int riscos_menu_items[3];        /* item number -> RISCOS_MENU_* */
++/* 2026: options with a tick, between Help and Quit, from the hint (or
++   system variable) SDL_RISCOS_MENU_OPTIONS: "Label=Variable;..." (at most
++   4). Each is ticked while its system variable is "on"; choosing it sets
++   the variable to "off" or "on", for the program to read. */
++#define RISCOS_MENU_OPTIONS_MAX 4
++static char riscos_option_label[RISCOS_MENU_OPTIONS_MAX][12];
++static char riscos_option_var[RISCOS_MENU_OPTIONS_MAX][48];
++static int riscos_options;
++
++static int riscos_iconbar_menu[7 + (3 + RISCOS_MENU_OPTIONS_MAX) * 6];
++static int riscos_menu_items[3 + RISCOS_MENU_OPTIONS_MAX];  /* item number -> RISCOS_MENU_* */
++static int riscos_menu_count;
++
++static void
++RISCOS_ReadMenuOptions(void)
++{
++    char list[200], *p, *next;
++    const char *hint = SDL_GetHint("SDL_RISCOS_MENU_OPTIONS");
++    riscos_options = 0;
++    if (hint)
++        SDL_strlcpy(list, hint, sizeof(list));
++    else if (_kernel_getenv("SDL_RISCOS_MENU_OPTIONS", list, sizeof(list)))
++        return;
++    for (p = list; p && *p && riscos_options < RISCOS_MENU_OPTIONS_MAX; p = next) {
++        char *eq;
++        next = SDL_strchr(p, ';');
++        if (next)
++            *next++ = 0;
++        eq = SDL_strchr(p, '=');
++        if (!eq || eq == p || !eq[1])
++            continue;
++        *eq = 0;
++        SDL_strlcpy(riscos_option_label[riscos_options], p, sizeof(riscos_option_label[0]));
++        SDL_strlcpy(riscos_option_var[riscos_options], eq + 1, sizeof(riscos_option_var[0]));
++        riscos_options++;
++    }
++}
++
++static SDL_bool
++RISCOS_OptionOn(int option)
++{
++    char value[8];
++    return !_kernel_getenv(riscos_option_var[option], value, sizeof(value))
++        && SDL_strcasecmp(value, "on") == 0;
++}
++
++/* The ticks, from the variables (the program may have changed them). */
++static void
++RISCOS_MenuTicks(void)
++{
++    int n;
++    for (n = 0; n < riscos_menu_count; n++) {
++        int k = riscos_menu_items[n] - RISCOS_MENU_OPTION;
++        int *item = &riscos_iconbar_menu[7 + 6 * n];
++        if (k >= 0)
++            item[0] = (item[0] & ~1) | (RISCOS_OptionOn(k) ? 1 : 0);
++    }
++}
+ static int riscos_info_window = -1;
+ static int riscos_info_task;            /* the task it belongs to */
+ 
+@@ -921,16 +977,28 @@
+     riscos_iconbar_menu[3] = 0x00070207;    /* title fg 7, bg 2, work fg 7, bg 0 */
+     riscos_iconbar_menu[4] = SDL_max(160, 16 * (int)SDL_strlen(title) + 32);
+     riscos_iconbar_menu[5] = 44;            /* item height */
+-    for (i = RISCOS_MENU_INFO; i <= RISCOS_MENU_QUIT; i++) {
++    RISCOS_ReadMenuOptions();
++    for (i = 0; i < 3 + riscos_options; i++) {
++        /* in order: Info, Help, the options, Quit */
++        int what = i <= RISCOS_MENU_HELP ? i
++                 : i < 2 + riscos_options ? RISCOS_MENU_OPTION + i - 2
++                 : RISCOS_MENU_QUIT;
+         int *item = &riscos_iconbar_menu[7 + 6 * n];
+-        if (i == RISCOS_MENU_HELP && !RISCOS_HelpPath())
++        if (what == RISCOS_MENU_HELP && !RISCOS_HelpPath())
+             continue;
+         item[0] = 0;
+-        item[1] = i == RISCOS_MENU_INFO ? RISCOS_InfoWindow(driverdata->wimp_task) : -1;
++        item[1] = what == RISCOS_MENU_INFO ? RISCOS_InfoWindow(driverdata->wimp_task) : -1;
+         item[2] = 0x07000021;               /* text, filled, black on white */
+-        SDL_strlcpy((char *)&item[3], texts[i], 12);
+-        riscos_menu_items[n++] = i;
++        SDL_strlcpy((char *)&item[3], what >= RISCOS_MENU_OPTION
++                    ? riscos_option_label[what - RISCOS_MENU_OPTION] : texts[what], 12);
++        if (what >= RISCOS_MENU_OPTION && n > 0 && riscos_menu_items[n - 1] < RISCOS_MENU_OPTION)
++            riscos_iconbar_menu[7 + 6 * (n - 1)] |= 2;  /* a dotted line above the options */
++        if (what == RISCOS_MENU_QUIT && n > 0 && riscos_menu_items[n - 1] >= RISCOS_MENU_OPTION)
++            riscos_iconbar_menu[7 + 6 * (n - 1)] |= 2;  /* and below them */
++        riscos_menu_items[n++] = what;
+     }
++    riscos_menu_count = n;
++    RISCOS_MenuTicks();
+     riscos_iconbar_menu[7] |= 0x100;                    /* title indirected */
+     riscos_iconbar_menu[7 + 6 * (n - 1)] |= 0x80;       /* last item */
+     regs.r[1] = (int)riscos_iconbar_menu;
+@@ -946,8 +1014,13 @@
+     _kernel_swi_regs regs;
+     int mouse[5];
+ 
+-    if (selection[0] < 0 || selection[0] > 2)
++    if (selection[0] < 0 || selection[0] >= riscos_menu_count)
+         return;
++    if (riscos_menu_items[selection[0]] >= RISCOS_MENU_OPTION) {
++        int k = riscos_menu_items[selection[0]] - RISCOS_MENU_OPTION;
++        _kernel_setenv(riscos_option_var[k], RISCOS_OptionOn(k) ? "off" : "on");
++        RISCOS_MenuTicks();
++    }
+     switch (riscos_menu_items[selection[0]]) {
+     case RISCOS_MENU_HELP: {
+         const char *help = RISCOS_HelpPath();

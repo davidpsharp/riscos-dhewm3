@@ -49,13 +49,13 @@ package: it comes from id's archive when you ask for it.
 To see the frame rate: open the console (Shift+Esc), type  com_showFPS 1
 and press Return.
 
-To play faster, turn off the shadows: in the console, type  r_shadows 0
-(on a Pi 4 it runs a third to a half faster: 16.5 to 25 frames a second in
-the hangar).
-To keep it, add the line  set r_shadows 0  to
-!dhewm3.home.dhewm3.base.autoexec/cfg, outside the part !dhewm3 marks.
-r_skipSpecular 1 (no shiny highlights) gains a little more, about 1 frame
-a second.
+Shadows: on a Raspberry Pi 4 they're off at first, because they cost a lot
+there (with them the game runs at about two thirds of the speed: 16.5
+instead of 25 frames a second in the hangar). Elsewhere they're on. To
+change it, choose Shadows from the icon bar menu (!dhewm3's, or the game's
+while it runs): it takes effect at once, and !dhewm3 remembers it.
+In the console, r_skipSpecular 1 (no shiny highlights) gains a little more,
+about 1 frame a second.
 
 
 The full game

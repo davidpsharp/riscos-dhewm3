@@ -198,10 +198,16 @@ struct {
 		int submenu;
 		unsigned icon_flags;
 		char text[12];
-	} items[3];
+	} items[4];
 } Menu;
 
-enum { MenuInfo, MenuHelp, MenuQuit };
+enum { MenuInfo, MenuHelp, MenuShadows, MenuQuit, MenuItems };
+
+// Shadows (r_shadows) follow the system variable dhewm3$Shadows, "on" or "off": the game reads
+// it while it runs (sys/events.cpp), and its own icon bar menu has the same Shadows item (SDL's
+// SDL_RISCOS_MENU_OPTIONS, set in Game). Off by default on a Pi 4 (V3DRender), where they cost
+// about a third of each frame; on elsewhere. The choice is kept in Choices:dhewm3.Shadows.
+bool Shadows_On(void);
 
 void Build_Menu(void)
 {
@@ -210,21 +216,29 @@ void Build_Menu(void)
 	Menu.colours[0] = 7; Menu.colours[1] = 2; Menu.colours[2] = 7; Menu.colours[3] = 0;
 	Menu.width = 128;
 	Menu.height = 44;
-	char const * names[3] = {"Info", "Help", "Quit"};
-	for (int i = 0; i < 3; i++) {
+	char const * names[MenuItems] = {"Info", "Help", "Shadows", "Quit"};
+	for (int i = 0; i < MenuItems; i++) {
 		Menu.items[i].submenu = i == MenuInfo ? InfoWindow : -1;
 		Menu.items[i].icon_flags = 0x07000021;
 		strncpy(Menu.items[i].text, names[i], sizeof(Menu.items[i].text));
 	}
+	Menu.items[MenuHelp].flags = 2;		// dotted lines around Shadows
+	Menu.items[MenuShadows].flags = 2;
 	Menu.items[MenuQuit].flags = 0x80;	// the last item
+}
+
+void Menu_Ticks(void)
+{
+	Menu.items[MenuShadows].flags = (Menu.items[MenuShadows].flags & ~1u) | (Shadows_On() ? 1 : 0);
 }
 
 void Open_Menu(int mouse_x)
 {
+	Menu_Ticks();
 	_kernel_swi_regs regs;
 	regs.r[1] = (int)&Menu;
 	regs.r[2] = mouse_x - 64;
-	regs.r[3] = 96 + 3 * 44;
+	regs.r[3] = 96 + MenuItems * 44;
 	Swi(Wimp_CreateMenu, regs);
 }
 
@@ -1389,6 +1403,51 @@ bool V3DRender_Loaded(void)
 	return _kernel_swi(OS_Module, &regs, &regs) == nullptr;
 }
 
+bool Oscli_Ok(std::string const & command);
+
+std::string SavedShadows;	// what Choices:dhewm3.Shadows holds ("" before it's read or saved)
+
+bool Shadows_On(void)
+{
+	return Os_Variable("dhewm3$Shadows") != "off";
+}
+
+void Set_Shadows(bool on)
+{
+	_kernel_setenv("dhewm3$Shadows", on ? "on" : "off");
+}
+
+// At start: the saved choice, else off on a Pi 4 (V3DRender) and on elsewhere.
+void Load_Shadows_Choice(void)
+{
+	Oscli("IfThere Choices:dhewm3.Shadows Then Obey Choices:dhewm3.Shadows");
+	SavedShadows = Os_Variable("dhewm3$Shadows");
+	if (SavedShadows != "on" && SavedShadows != "off") {
+		Set_Shadows(!V3DRender_Loaded());
+	}
+	fprintf(stderr, "launcher: shadows %s%s\n", Shadows_On() ? "on" : "off",
+		SavedShadows.empty() ? " (the default)" : "");
+}
+
+// After a change (from either menu): kept in <Choices$Write>.dhewm3.Shadows, an Obey file.
+void Save_Shadows_Choice(void)
+{
+	std::string const now = Shadows_On() ? "on" : "off";
+	if (now == SavedShadows || Os_Variable("Choices$Write").empty()) {
+		return;
+	}
+	Oscli_Ok("CDir <Choices$Write>.dhewm3");
+	FILE * f = fopen("/<Choices$Write>/dhewm3/Shadows", "w");
+	if (f == nullptr) {
+		return;
+	}
+	fprintf(f, "Set dhewm3$Shadows %s\n", now.c_str());
+	fclose(f);
+	Oscli_Ok("SetType <Choices$Write>.dhewm3.Shadows Obey");
+	SavedShadows = now;
+	fprintf(stderr, "launcher: saved shadows %s\n", now.c_str());
+}
+
 int GPU_Area_MB(void)
 {
 	std::string const size = Os_Variable("V3DRender$Size");
@@ -1632,6 +1691,10 @@ void Poll_Loop(void)
 				if (block[0] == MenuHelp) {
 					Open_Help();
 				}
+				if (block[0] == MenuShadows) {
+					Set_Shadows(!Shadows_On());
+					Save_Shadows_Choice();
+				}
 				{
 					int pointer[5];
 					regs.r[1] = (int)pointer;
@@ -1663,6 +1726,7 @@ void Poll_Loop(void)
 				}
 				if (block[4] == 0x400C3 && GameTask != 0 && block[1] == GameTask) {	// Message_TaskCloseDown
 					GameTask = 0;
+					Save_Shadows_Choice();	// as the game's menu or console left it
 					if (IconHandle < 0) {
 						Put_Icon_On_Bar();
 					}
@@ -1728,6 +1792,7 @@ int main(int argc, char ** argv)
 		return 1;
 	}
 	TaskHandle = regs.r[1];
+	Load_Shadows_Choice();
 	Create_Info_Window();
 	Build_Menu();
 	Put_Icon_On_Bar();

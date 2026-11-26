@@ -17,6 +17,10 @@ RMEnsure DigitalRenderer 0.55 IfThere System:Modules.DRenderer Then RMLoad Syste
 Set XDG_DATA_HOME /|<dhewm3$Dir>/home
 Set XDG_CONFIG_HOME /|<dhewm3$Dir>/home
 
+| The game's icon bar menu: Shadows, ticked while dhewm3$Shadows is "on" (the launcher sets it;
+| the game follows it as it changes).
+Set SDL_RISCOS_MENU_OPTIONS Shadows=dhewm3$Shadows
+
 | The heap is a dynamic area, so the slot only holds the program.
 WimpSlot -min 64000K -max 64000K
 Dir <dhewm3$Dir>

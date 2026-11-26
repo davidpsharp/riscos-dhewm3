@@ -1811,10 +1811,41 @@ static void handleMouseGrab() {
 Sys_GenerateEvents
 ================
 */
+#ifdef __riscos__
+#include <kernel.h>
+/* RISC OS port: r_shadows follows the system variable dhewm3$Shadows ("on" or "off"),
+   which the icon bar menu's Shadows item (SDL_RISCOS_MENU_OPTIONS) and the launcher
+   change; and a change made in the console goes back into the variable, so that the
+   menu's tick is right. Checked four times a second. */
+static void RISCOS_SyncShadows( void ) {
+	static int lastCheck, seenVar = -1, seenCvar = -1;
+	int now = Sys_Milliseconds();
+	if ( now - lastCheck < 250 )
+		return;
+	lastCheck = now;
+	char value[8];
+	if ( _kernel_getenv( "dhewm3$Shadows", value, sizeof( value ) ) )
+		return;				// not set: r_shadows is the game's own
+	int var = idStr::Icmp( value, "on" ) == 0;
+	int cvar = cvarSystem->GetCVarBool( "r_shadows" );
+	if ( var != seenVar ) {
+		if ( cvar != var )
+			cvarSystem->SetCVarBool( "r_shadows", var != 0 );
+		seenVar = seenCvar = var;
+	} else if ( cvar != seenCvar ) {
+		_kernel_setenv( "dhewm3$Shadows", cvar ? "on" : "off" );
+		seenVar = seenCvar = cvar;
+	}
+}
+#endif
+
 void Sys_GenerateEvents() {
 	D3P_ScopedCPUSample(Sys_GenerateEvents);
 
 	handleMouseGrab();
+#ifdef __riscos__
+	RISCOS_SyncShadows();
+#endif
 
 	char *s = Sys_ConsoleInput();
 

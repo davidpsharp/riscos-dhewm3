@@ -13,6 +13,8 @@ riscos/sdk.sh riscos/package.sh >/dev/null
 W='romac/data/hd4/Work/!dhewm3'
 mkdir -p "$W"
 rm -f "$W/!RunImage,ff8" "$W/dhewm3,ff8"
+# and any copy RISC OS wrote without a type suffix, which IXFS would run instead
+for f in build/riscos/app/'!dhewm3'/*,???; do b=$(basename "$f"); rm -f "$W/${b%,???}"; done
 cp -R build/riscos/app/'!dhewm3'/. "$W"/
 case "$1" in
 --with-demo) mkdir -p "$W/demo"; [ -f "$W/demo/demo00.pk4" ] || cp -c data/demo-extract/demo/demo00.pk4 "$W/demo/demo00.pk4" ;;
