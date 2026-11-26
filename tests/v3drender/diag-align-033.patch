@@ -1,0 +1,152 @@
+diff --git a/core/v3d_bo.c b/core/v3d_bo.c
+index fb108f8..b863c14 100644
+--- a/core/v3d_bo.c
++++ b/core/v3d_bo.c
+@@ -133,10 +133,21 @@ range_free (struct v3d_dev *v3d, uint32_t p, uint32_t n)
+ /* Aligned BOs are placed from the top of the area down, the rest first
+    fit from the bottom, so the small ones don't break up the aligned
+    space (and a *V3DDump's small BOs still replay at their addresses). */
++/* riscos-doom3 test (26 Nov 2026): align a BO only when its size is a
++   whole number of the alignment. Mesa asks for sizes like 1 MB + 4 KB
++   (257 pages); placed on a 256-page boundary, each left a 255-page gap
++   that only smaller BOs could use, and a 17-page BO left a 15-page gap.
++   With thousands of BOs (Doom 3) the area ended as 15-page holes. */
++static uint32_t
++bo_align (uint32_t n)
++{
++  return n >= 256 && !(n & 255) ? 256 : n >= 16 && !(n & 15) ? 16 : 1;
++}
++
+ static int
+ find_pages_aligned (struct v3d_dev *v3d, uint32_t n, uint32_t *first, int avoid)
+ {
+-  uint32_t align = n >= 256 ? 256 : n >= 16 ? 16 : 1;
++  uint32_t align = bo_align (n);
+   if (align > 1 && n < v3d->area_pages)
+     for (uint32_t p = (v3d->area_pages - n) & ~(align - 1); p >= align; p -= align)
+       if (range_ok (v3d, p, n, avoid))
+@@ -147,15 +158,99 @@ find_pages_aligned (struct v3d_dev *v3d, uint32_t n, uint32_t *first, int avoid)
+   return find_pages (v3d, n, first, avoid);
+ }
+ 
++/* riscos-doom3 diagnostic (26 Nov 2026): when a place can't be found, log what
++   the page map holds. The first 12 refusals, then one in 1000. */
++static uint32_t diag_refusals;
++
++static void
++diag_refused (struct v3d_dev *v3d, uint32_t n)
++{
++  if (diag_refusals++ >= 3 && diag_refusals % 500)
++    return;
++  uint32_t set = 0, backed = 0, run = 0, best = 0, bestat = 0;
++  for (uint32_t p = 0; p < v3d->area_pages; p++)
++    {
++      if ((v3d->page_backed[p >> 5] >> (p & 31)) & 1)
++	backed++;
++      if ((v3d->page_map[p >> 5] >> (p & 31)) & 1)
++	{
++	  set++;
++	  run = 0;
++	}
++      else
++	{
++	  run++;
++	  if (run > best)
++	    {
++	      best = run;
++	      bestat = p + 1 - run;
++	    }
++	}
++    }
++  uint32_t live = 0, live_pages = 0, held = 0, held_pages = 0, imp_pages = 0;
++  uint32_t cnt[4] = { 0, 0, 0, 0 }, pgs[4] = { 0, 0, 0, 0 };
++  for (uint32_t i = 1; i < v3d->nbos; i++)
++    {
++      struct v3d_bo *b = &v3d->bos[i];
++      if (!b->used)
++	continue;
++      live++;
++      live_pages += b->npages;
++      int k = b->npages <= 16 ? 0 : b->npages <= 64 ? 1 : b->npages <= 256 ? 2 : 3;
++      cnt[k]++;
++      pgs[k] += b->npages;
++      if (b->imported)
++	imp_pages += b->npages;
++      if (b->refs > 1)
++	{
++	  held++;
++	  held_pages += b->npages;
++	}
++    }
++  plat_log (v3d, "DIAG live BOs", live);
++  plat_log (v3d, "DIAG live <=64KB BOs", cnt[0]);
++  plat_log (v3d, "DIAG live <=64KB pages", pgs[0]);
++  plat_log (v3d, "DIAG live <=256KB BOs", cnt[1]);
++  plat_log (v3d, "DIAG live <=256KB pages", pgs[1]);
++  plat_log (v3d, "DIAG live <=1MB BOs", cnt[2]);
++  plat_log (v3d, "DIAG live <=1MB pages", pgs[2]);
++  plat_log (v3d, "DIAG live >1MB BOs", cnt[3]);
++  plat_log (v3d, "DIAG live >1MB pages", pgs[3]);
++  plat_log (v3d, "DIAG live BO pages", live_pages);
++  plat_log (v3d, "DIAG imported BO pages", imp_pages);
++  plat_log (v3d, "DIAG BOs with refs over 1", held);
++  plat_log (v3d, "DIAG pages of those BOs", held_pages);
++  plat_log (v3d, "DIAG refused: pages", n);
++  plat_log (v3d, "DIAG page map set", set);
++  plat_log (v3d, "DIAG pages_used", v3d->pages_used);
++  plat_log (v3d, "DIAG pool pages", v3d->pool_pages);
++  plat_log (v3d, "DIAG page_backed", backed);
++  plat_log (v3d, "DIAG largest free run", best);
++  plat_log (v3d, "DIAG largest free run at page", bestat);
++}
++
+ /* a new place: clear of the pool if there is room, else anywhere free */
+ static int
+ find_place (struct v3d_dev *v3d, uint32_t n, uint32_t *first, int aligned)
+ {
+   if (v3d->no_page_ops)			/* (0.26) kept pages can't go back now */
+-    return aligned ? find_pages_aligned (v3d, n, first, 1) : find_pages (v3d, n, first, 1);
++    {
++      if (aligned ? find_pages_aligned (v3d, n, first, 1) : find_pages (v3d, n, first, 1))
++	return 1;
++      diag_refused (v3d, n);		/* riscos-doom3 diagnostic */
++      return 0;
++    }
+   if (aligned)
+-    return find_pages_aligned (v3d, n, first, 1) || find_pages_aligned (v3d, n, first, 0);
+-  return find_pages (v3d, n, first, 1) || find_pages (v3d, n, first, 0);
++    {
++      if (find_pages_aligned (v3d, n, first, 1) || find_pages_aligned (v3d, n, first, 0))
++	return 1;
++      diag_refused (v3d, n);
++      return 0;
++    }
++  if (find_pages (v3d, n, first, 1) || find_pages (v3d, n, first, 0))
++    return 1;
++  diag_refused (v3d, n);
++  return 0;
+ }
+ 
+ /* ---- (0.25) the page pool ----
+@@ -451,7 +546,7 @@ v3d_bo_create_cached (struct v3d_dev *v3d, uint32_t bytes, int cached, int *bo_o
+       return -V3D_ENOMEM;
+     }
+   uint64_t t0 = plat_time_ns ();
+-  uint32_t at = v3d->place_at, align = n >= 256 ? 256 : n >= 16 ? 16 : 1;
++  uint32_t at = v3d->place_at, align = bo_align (n);
+   v3d->place_at = 0;
+   cached = cached != 0;
+   if (at && at + n <= v3d->area_pages && range_free (v3d, at, n))
+diff --git a/riscos/plat_pi4.h b/riscos/plat_pi4.h
+index 4951d2a..3ebb266 100644
+--- a/riscos/plat_pi4.h
++++ b/riscos/plat_pi4.h
+@@ -32,7 +32,7 @@ void pi4_cache_init (void);		/* (0.15) the kernel's whole-cache ARMops */
+ uint32_t pi4_cache_threshold (void);	/* 0: line by line only */
+ extern uint32_t pi4_cache_whole;
+ 
+-#define PI4_LOG 8
++#define PI4_LOG 64
+ struct pi4_log { const char *msg; uint32_t value; };
+ extern struct pi4_log pi4_log[PI4_LOG];
+ extern unsigned pi4_log_next;

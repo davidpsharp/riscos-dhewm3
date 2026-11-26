@@ -8,28 +8,33 @@ Linux; V3DRender on a native Raspberry Pi 4).
 
 *dhewm3 in a window on RoMac (RISC OS on a Mac, through RISC3D), Mars City hangar, about 30 fps.*
 
-**Status (26 November 2026):** at present the demo works but the full game's data does not. That is
-under investigation.
+Home page: https://davidsharp.com/riscos/doom3/
+Contact (questions, bug reports): https://davidsharp.com/contact/ or this repository's issues.
+
+**Status (version 0.2.2, 26 November 2026):** the free demo and the full game both play.
 - **RoMac:** plays in a window, about 30 fps.
-- **Pi 4:** plays Mars City 1 at about 11-15 fps (800x600, Medium). It needs V3DRender's
-  buffer handle limits raised (the test module in the release).
-- **Full game data:** doesn't work yet. On a Pi 4 the full game loads (about four minutes) and then
-  crashes before the first frame.
+- **Raspberry Pi 4 (RISC OS 5.30, RISC3D 0.22 with V3DRender 0.37):** the demo plays at about
+  12 fps in an 800x600 window. The full game plays too, at about 10 fps in
+  Mars City: on a Pi the launcher gives the GPU a 1 GB buffer area and uses smaller textures,
+  so it needs about 700 MB of free memory (a 2 GB or bigger Pi 4; tested on 4 GB). See
+  [docs/full-game-gpu-buffers.md](docs/full-game-gpu-buffers.md).
 - **RISC OS on Linux:** not yet tried.
 
+**Game data:** none is included. The icon bar launcher downloads id Software's free Doom 3 demo on
+request, checks it and shows id's licence. To play the full game, buy Doom 3 (Steam or GOG: the
+original Doom 3, not BFG Edition) and copy its `base` folder (pak000 to pak008) into `!dhewm3`;
+`!Help` says how.
+
 The issues found along the way, for RISC3D's author, are summarised for all three ports in
-[docs/RISC3D-for-Andy.md](docs/RISC3D-for-Andy.md); the Doom 3 evidence is in
-[docs/RISC3D-0.17-report.md](docs/RISC3D-0.17-report.md). The plan is in
+[docs/RISC3D-for-Andy.md](docs/RISC3D-for-Andy.md); the full game's GPU memory problem is in
+[docs/full-game-gpu-buffers.md](docs/full-game-gpu-buffers.md). The plan is in
 [docs/PLAN.md](docs/PLAN.md).
 
-**No game data is included.** The icon bar launcher downloads id Software's Doom 3 demo on
-request, checks it and shows id's licence. The full game's data can be copied in instead, but
-doesn't work yet (see Status).
-
 ## Download
-The releases page has `riscos-dhewm3-<version>.zip`, a RISC OS zip (types kept by SparkFS,
-!SparkPlug or Info-ZIP UnZip) with `!dhewm3`, the V3DRender test module and the GL check
-program. Its ReadMe says how to use them.
+From the home page, from PackMan (package dhewm3), or from this repository's Releases page:
+`dhewm3-riscos-<version>.zip`, a RISC OS zip (types kept by SparkFS, !SparkPlug or Info-ZIP
+UnZip) holding `!dhewm3`. It needs RISC OS 5 on ARMv7 or later, SharedUnixLibrary and
+ARMEABISupport, and on a Pi 4 RISC3D 0.22 or later in `!Boot.Resources` (PackMan installs them).
 
 ## Building
 GCCSDK cross-compiler in Docker (image `doom3-riscos`, with riscos-mesa's devkit):
@@ -50,6 +55,5 @@ GCCSDK cross-compiler in Docker (image `doom3-riscos`, with riscos-mesa's devkit
 dhewm3 is GPL-3.0 (see `dhewm3/COPYING.txt`), with id Software's additional terms. The
 launcher and port code are under the same licence. Files that are new in the port carry
 "RISC OS port, copyright David Sharp 2026" in their first line; `dhewm3/SOURCE-riscos` lists
-the dhewm3 files it changed. V3DRender (in the release's test module)
-is GPL-2.0-or-later; its change is `tests/v3drender/v026-16k.patch`. Doom 3's data is id
-Software's and isn't distributed here.
+the dhewm3 files it changed. The V3DRender test patches in `tests/v3drender` are
+GPL-2.0-or-later, as V3DRender is. Doom 3's data is id Software's and isn't distributed here.

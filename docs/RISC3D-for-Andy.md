@@ -27,6 +27,12 @@ only its own evidence, linked below.
   like the bands in item 4. A 64K-colour desktop still garbles GL windows (item 4 below); a
   16M-colour desktop draws correctly.
 
+**26 November, the full game on 0.22 (V3DRender 0.37):** it crashed after loading because
+its ~4,900 GPU buffers (about 850 MB) didn't fit V3DRender's 256 MB area, and even in a 1 GB
+area the buffer alignment fragmented it (Mesa's 2^n + 1 page sizes each leave an aligned gap).
+dhewm3 0.2.2 works round both (1 GB area, smaller textures); a patch for the alignment is in
+[full-game-gpu-buffers.md](full-game-gpu-buffers.md#for-andy-risc3d--v3drender).
+
 **Thank you for 0.23** ("imported BOs follow pages the OS moves"): it cured the GPU hangs and
 frozen windows Doom 3 had with 0.16.
 

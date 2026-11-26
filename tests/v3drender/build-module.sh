@@ -4,7 +4,7 @@
 set -euo pipefail
 cd /work/build/v3drender/src
 mkdir -p out/obj
-CORE="core/v3d_hw.c core/v3d_sched.c core/v3d_bo.c core/v3d_ioctl.c core/v3d_2d.c"
+CORE="core/v3d_hw.c core/v3d_sched.c core/v3d_bo.c core/v3d_ioctl.c core/v3d_2d.c core/v3d_present.c"
 INC="-Iinclude -Icore -Icore/compat"
 T=/opt/riscos-crossdev/toolchain/env/bin/arm-riscos-gnueabihf-
 MC="-std=gnu11 -O2 -marm -march=armv7-a -mno-unaligned-access -fpie -fvisibility=hidden \

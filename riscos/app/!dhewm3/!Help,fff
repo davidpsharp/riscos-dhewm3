@@ -1,26 +1,35 @@
-dhewm3 for RISC OS
-==================
+dhewm3 for RISC OS, version 0.2.2
+=================================
 
 dhewm3 is the Doom 3 engine (id Software's GPL source, kept up by the dhewm3
 team). This is its RISC OS port. It draws with the GPU through RISC3D, and
-needs RISC OS 5 on ARMv7 or later.
+needs RISC OS 5 on ARMv7 or later. It plays the free Doom 3 demo, and the full
+game if you have its data (see "The full game" below).
+
+Home page: https://davidsharp.com/riscos/doom3/
+Contact (questions, bug reports): https://davidsharp.com/contact/
 
 It runs on:
-- RoMac (RISC OS on a Mac), drawing on the Mac's GPU;
-- a Raspberry Pi 4 running RISC OS 5.30, drawing on its GPU through RISC3D 0.22
-  (the demo, at about 12 frames a second in the hangar at 800 x 600);
+- a Raspberry Pi 4 running RISC OS 5.30, drawing on its GPU through RISC3D
+  0.22 (V3DRender 0.37). The demo and the full game play at about 10 to 15
+  frames a second in an 800 x 600 window. Tested on a 4 GB Pi 4;
+- RoMac (RISC OS on a Mac), drawing on the Mac's GPU, at about 30 frames a
+  second;
 - RISC OS on Linux, on a machine whose GPU Linux drives (not yet tested).
 
-You need !RISC3D (RISC3D 0.05 or later) and !MesaLibs in !Boot.Resources, and
+You need !RISC3D (0.22 or later on a Pi 4) in !Boot.Resources, and
 SharedUnixLibrary (1.16 or later) and ARMEABISupport (1.03 or later). PackMan
-installs the last two for you.
+installs all three for you.
 
 
 Playing
 -------
 
 Double-click !dhewm3: its icon appears on the icon bar. Click the icon to
-play. The game runs in an 800 x 600 desktop window.
+play. The game runs in an 800 x 600 desktop window. Alt+Return switches to
+full screen and back; full screen keeps the desktop's own screen mode, so on a
+Pi 4 it is slower (about 6 frames a second at 1280 x 1024). Use a 16 million
+colour desktop.
 
 The first time, there is no game data, so clicking the icon offers to
 download the free Doom 3 demo:
@@ -39,27 +48,58 @@ If you already have the installer, drag it onto the icon instead.
 id's licence doesn't allow the demo to be passed on, so it isn't in this
 package: it comes from id's archive when you ask for it.
 
+To see the frame rate: open the console (Shift+Esc), type  com_showFPS 1
+and press Return.
+
 
 The full game
 -------------
 
-To play the full game, copy the base folder of your own copy of Doom 3 (Steam
-or GOG) into !dhewm3 as !dhewm3.base. It holds pak000 to pak008, which are
-pk4 files. Leave out the other folders (d3xp, pb, Docs and so on). A click on
-the icon then plays the full game; without the base folder it plays the free
-demo. Keep the .pk4 file type when you copy the files across.
+Buy Doom 3 from Steam or GOG: the original "DOOM 3", not "DOOM 3: BFG
+Edition", whose data dhewm3 can't read. Install it on a PC or Mac, then copy
+its base folder into !dhewm3, so that you have !dhewm3.base. On Steam the
+folder is steamapps/common/Doom 3/base.
 
-Known problem, version 0.2.1: on a Raspberry Pi 4 the full game loads (it takes
-about four minutes, most of it the textures) and then stops with a crash
-(SIGSEGV) before the first frame. The crash is in the GPU driver's buffer code,
-not in the game's own data, and is being looked into. The demo plays.
+Copy only pak000 to pak008 (the .pk4 files) from base: they are about 1.6 GB.
+Leave out the other folders (d3xp, Docs and so on). Keep them as pk4 files
+(type FFF is fine). With the base folder there, a click on the icon plays the
+full game; without it, the free demo.
+
+On a Raspberry Pi 4 the full game needs more of the GPU's memory than RISC3D
+gives programs by default (256 MB), and about 700 MB of free memory, so:
+- Before the full game starts, !dhewm3 gives the GPU a 1 GB area for its
+  buffers. It does this itself: it restarts RISC3D's GPU driver (V3DRender)
+  with the bigger area, which lasts until you restart the computer. It can only
+  do that while no other program is using the GPU; if one is, it asks you to
+  quit it first.
+- It plays the full game with smaller textures (at most 256 x 256), as
+  Doom 3's own lower quality settings do. With full-size textures the game
+  needs nearly all of the 1 GB, and can then stop with an error. The settings
+  are in a marked part of !dhewm3.home.dhewm3.base.autoexec/cfg, which
+  !dhewm3 rewrites at each start; the rest of that file is yours.
+  To try full-size textures anyway (it needs about 960 MB free):
+      *Set dhewm3$Textures full
+- A Raspberry Pi 4 with 1 GB of memory can't run the full game; the demo is
+  fine.
+
+Loading a level of the full game takes about a minute and a half on a Pi 4.
+
+
+Known problems
+--------------
+
+- On a Pi 4, a few GPU resets can happen while a level loads in full screen;
+  the game carries on.
+- A 64K colour desktop shows the game's window garbled: use a 16 million
+  colour mode.
+
 
 Files
 -----
 
 !dhewm3.home      settings and saved games
 !dhewm3.stdout    the game's log (and stderr: its errors)
-!dhewm3.launcherlog  the launcher's log (downloads and installs)
+!dhewm3.launcherlog  the launcher's log (downloads, installs, GPU set-up)
 
 
 Credits

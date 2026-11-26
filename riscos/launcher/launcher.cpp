@@ -48,7 +48,7 @@
 int __riscosify_control = __RISCOSIFY_NO_SUFFIX;
 
 #ifndef LAUNCHER_VERSION
-#define LAUNCHER_VERSION "0.2.1"
+#define LAUNCHER_VERSION "0.2.2"
 #endif
 
 namespace {
@@ -84,6 +84,8 @@ char const AppSprite[] = "!dhewm3";
 char const AppName[] = "dhewm3";
 char const AppPurpose[] = "Doom 3 engine";
 char const AppAuthor[] = "id Software; dhewm3 team";
+char const HomePage[] = "https://davidsharp.com/riscos/doom3/";
+int const InfoLinkIcon = 5;	// the Website field in the Info window: click to open HomePage
 
 bool Swi(int swi, _kernel_swi_regs & regs)
 {
@@ -151,32 +153,35 @@ void Create_Info_Window(void)
 	snprintf(version, sizeof(version), "%s (%s)", LAUNCHER_VERSION, __DATE__);
 	static struct {
 		WindowBlock w;
-		Icon icons[10];
+		Icon icons[12];
 	} block;
 	static char const title[] = "About this program";
 	static char const field_valid[] = "R2";
 	memset(&block, 0, sizeof(block));
 	block.w.visible[0] = 392; block.w.visible[1] = 628;
-	block.w.visible[2] = 392 + 668; block.w.visible[3] = 628 + 308;
+	block.w.visible[2] = 392 + 668; block.w.visible[3] = 628 + 368;
 	block.w.behind = -1;
 	block.w.flags = 0x84000012;
 	unsigned char const colours[8] = {7, 2, 7, 1, 12, 14, 12, 0};
 	memcpy(block.w.colours, colours, sizeof(colours));
-	block.w.extent[1] = -308;
+	block.w.extent[1] = -368;
 	block.w.extent[2] = 668;
 	block.w.title_flags = 0x0000013D;
 	block.w.sprite_area = 1;
 	block.w.title.buffer = title;
 	block.w.title.validation = (char const *)-1;
 	block.w.title.length = sizeof(title);
-	char const * labels[5] = {"Name", "Purpose", "Author", "Ported by", "Version"};
-	char const * values[5] = {AppName, AppPurpose, AppAuthor, "David Sharp", version};
-	for (int row = 0; row < 5; row++) {
+	char const * labels[6] = {"Name", "Purpose", "Author", "Ported by", "Version", "Website"};
+	char const * values[6] = {AppName, AppPurpose, AppAuthor, "David Sharp", version,
+		HomePage + strlen("https://")};
+	for (int row = 0; row < 6; row++) {
 		int const top = -4 - 60 * row;
-		Indirected(block.icons[row], 184, top - 52, 660, top, 0x1700613D, values[row], field_valid);
-		Plain_Text(block.icons[5 + row], 8, top - 48, 184, top - 8, 0x17000211, labels[row]);
+		// the Website field is a link: dark blue text, and a click (button type 3) reports it
+		unsigned const flags = row == InfoLinkIcon ? 0x1800313D : 0x1700613D;
+		Indirected(block.icons[row], 184, top - 52, 660, top, flags, values[row], field_valid);
+		Plain_Text(block.icons[6 + row], 8, top - 48, 184, top - 8, 0x17000211, labels[row]);
 	}
-	block.w.icon_count = 10;
+	block.w.icon_count = 12;
 	_kernel_swi_regs regs;
 	regs.r[1] = (int)&block;
 	if (Swi(Wimp_CreateWindow, regs)) {
@@ -554,6 +559,44 @@ void Show_Message(std::string const & text, bool error, std::vector<Button> cons
 void Tell(std::string const & text, bool error)
 {
 	Show_Message(text, error, {{"OK", ACT_CLOSE}});
+}
+
+// Opens HomePage in a web browser (riscos-kb lesson 2026-11-02): the URI
+// module if it's loaded; else the URL broadcast to a running browser; if that comes back
+// unclaimed, the URLOpen_https alias a browser sets when the Filer sees it (URL_Not_Taken).
+int const Message_URL = 0x4AF80;
+void Open_Home_Page(void)
+{
+	_kernel_swi_regs regs;
+	regs.r[0] = 0;
+	regs.r[1] = (int)HomePage;
+	regs.r[2] = TaskHandle;
+	if (_kernel_swi(0x4E381, &regs, &regs) == nullptr) {	// URI_Dispatch
+		return;
+	}
+	int message[64];
+	memset(message, 0, sizeof(message));
+	strcpy((char *)&message[5], HomePage);
+	message[0] = (20 + (int)strlen(HomePage) + 1 + 3) & ~3;
+	message[4] = Message_URL;
+	regs.r[0] = 18;	// User_Message_Recorded
+	regs.r[1] = (int)message;
+	regs.r[2] = 0;	// to every task
+	Swi(Wimp_SendMessage, regs);
+}
+
+void URL_Not_Taken(void)
+{
+	fprintf(stderr, "launcher: no browser took the URL message\n");
+	if (!Os_Variable("Alias$URLOpen_https").empty()) {
+		_kernel_swi_regs regs;
+		std::string const command = std::string("URLOpen_https ") + HomePage;
+		regs.r[0] = (int)command.c_str();
+		if (Swi(Wimp_StartTask, regs)) {
+			return;
+		}
+	}
+	Tell(std::string("No web browser is running or known to the Filer. The home page is ") + HomePage + ".", false);
 }
 
 // The status line and bar: fraction 0..1 (or < 0 to leave the bar).
@@ -1276,6 +1319,166 @@ void Start_Game(void)
 	Close_Message();
 }
 
+/* --- the Pi 4's GPU memory (V3DRender) for the full game -------------------------------- */
+// Doom 3's full game holds about 830 MB of GPU buffers, but V3DRender's buffer area is 256 MB
+// unless V3DRender$Size says otherwise, and it is sized when V3DRender loads. So before the
+// full game starts on a Pi, the launcher reloads V3DRender with a 1 GB area, if there's the
+// memory for it and no other program has the GPU open. RoMac and RISC OS on Linux don't use
+// V3DRender, and the demo fits in 256 MB. See docs/full-game-gpu-buffers.md.
+// Even 1 GB isn't enough for full-size textures to be safe: V3DRender 0.37's buffer placement
+// leaves gaps, and at ~850 MB some buffers were refused (and then the game can crash). So on a
+// Pi the full game's normal, specular and diffuse maps are halved (at most 256x256, specular
+// 128x128), as Doom 3's own lower quality settings do: ~490 MB at most, tested over five levels
+// and in full screen. Set dhewm3$Textures to "full" to keep them full size.
+int const FullGameAreaMB = 1024;
+int const FullGameFreeMB = 700;	// the game's GPU buffers (~490 MB), its 64 MB slot, and a margin
+int const FullTexturesFreeMB = 960;	// with full-size textures (~860 MB)
+
+// The texture settings go in a marked block of the game's own autoexec.cfg, which it runs at
+// every start (a +exec on its command line would stop it showing its main menu). The block is
+// there only while the full game is started on a Pi; the rest of the file is left as it was.
+char const AutoexecBegin[] = "// !dhewm3 launcher: begin (rewritten at each start; see !Help)\n";
+char const AutoexecEnd[] = "// !dhewm3 launcher: end\n";
+char const PiSettings[] = "set image_downSize 1\nset image_downSizeLimit 256\n"
+	"set image_downSizeBump 1\nset image_downSizeBumpLimit 256\n"
+	"set image_downSizeSpecular 1\nset image_downSizeSpecularLimit 128\n";
+
+void Update_Autoexec(bool pi_settings)
+{
+	std::string const path = App_Path("home/dhewm3/base/autoexec.cfg");
+	std::string old;
+	FILE * f = fopen(path.c_str(), "r");
+	if (f != nullptr) {
+		char buffer[1024];
+		size_t n;
+		while ((n = fread(buffer, 1, sizeof(buffer), f)) > 0) {
+			old.append(buffer, n);
+		}
+		fclose(f);
+	}
+	std::string kept = old;
+	size_t const begin = kept.find(AutoexecBegin);
+	if (begin != std::string::npos) {
+		size_t end = kept.find(AutoexecEnd, begin);
+		end = end == std::string::npos ? kept.size() : end + strlen(AutoexecEnd);
+		kept.erase(begin, end - begin);
+	}
+	std::string const wanted = pi_settings
+		? kept + AutoexecBegin + PiSettings + AutoexecEnd : kept;
+	if (wanted == old) {
+		return;
+	}
+	mkdir(App_Path("home").c_str(), 0777);
+	mkdir(App_Path("home/dhewm3").c_str(), 0777);
+	mkdir(App_Path("home/dhewm3/base").c_str(), 0777);
+	f = fopen(path.c_str(), "w");
+	if (f == nullptr || fwrite(wanted.data(), 1, wanted.size(), f) != wanted.size()) {
+		fprintf(stderr, "launcher: couldn't update %s\n", path.c_str());
+	}
+	if (f != nullptr) {
+		fclose(f);
+	}
+	fprintf(stderr, "launcher: %s the Pi texture settings in autoexec.cfg\n", pi_settings ? "put" : "took out");
+}
+
+bool V3DRender_Loaded(void)
+{
+	_kernel_swi_regs regs;
+	regs.r[0] = 18;	// OS_Module 18: look up a module by name
+	regs.r[1] = (int)"V3DRender";
+	return _kernel_swi(OS_Module, &regs, &regs) == nullptr;
+}
+
+int GPU_Area_MB(void)
+{
+	std::string const size = Os_Variable("V3DRender$Size");
+	return size.empty() ? 256 : atoi(size.c_str());
+}
+
+int Free_Memory_MB(void)
+{
+	_kernel_swi_regs regs;
+	regs.r[0] = 6;	// OS_ReadDynamicArea 6: the free pool
+	if (!Swi(OS_ReadDynamicArea, regs)) {
+		return -1;
+	}
+	return (int)((unsigned)regs.r[1] >> 20);
+}
+
+// Programs with the GPU open, from *V3DRender's "Files open:" line (-1: couldn't tell)
+int GPU_Files_Open(void)
+{
+	Oscli("V3DRender { > <dhewm3$Dir>.gpustatus }");
+	FILE * f = fopen(App_Path("gpustatus").c_str(), "r");
+	int open = -1;
+	if (f != nullptr) {
+		char line[256];
+		while (fgets(line, sizeof(line), f) != nullptr) {
+			char const * text = line;
+			while (*text == '\r' || *text == '\n') {	// its lines end LF CR
+				text++;
+			}
+			if (strncmp(text, "Files open:", 11) == 0) {
+				open = atoi(text + 11);
+			}
+		}
+		fclose(f);
+	}
+	remove(App_Path("gpustatus").c_str());
+	return open;
+}
+
+bool Oscli_Ok(std::string const & command)
+{
+	_kernel_swi_regs regs;
+	regs.r[0] = (int)command.c_str();
+	return Swi(OS_CLI, regs);
+}
+
+// True if the game can start; else it has told the user why not.
+bool Prepare_GPU_For_Full_Game(void)
+{
+	bool const full_game_on_v3d = File_Size("base/pak000.pk4") > 0 && V3DRender_Loaded();
+	bool const full_textures = Os_Variable("dhewm3$Textures") == "full";
+	Update_Autoexec(full_game_on_v3d && !full_textures);
+	if (!full_game_on_v3d) {
+		return true;
+	}
+	int const need_mb = full_textures ? FullTexturesFreeMB : FullGameFreeMB;
+	int const free_mb = Free_Memory_MB();
+	int const area_mb = GPU_Area_MB();
+	fprintf(stderr, "launcher: full game on V3DRender: area %d MB, %d MB free\n", area_mb, free_mb);
+	if (free_mb >= 0 && free_mb < need_mb) {
+		Show_Message("Doom 3's full game needs about " + std::to_string(need_mb) + " MB of free "
+			"memory on a Raspberry Pi (most of it for the GPU), and " + std::to_string(free_mb) + " MB is "
+			"free. Quit some programs and try again. A Raspberry Pi 4 with 1 GB of memory can't run the "
+			"full game; the free demo needs much less.",
+			true, {{"Cancel", ACT_CLOSE}, {"Help", ACT_HELP}});
+		return false;
+	}
+	if (area_mb >= FullGameAreaMB) {
+		return true;
+	}
+	int const open = GPU_Files_Open();
+	if (open != 0) {
+		Show_Message("Doom 3's full game needs more of the GPU's memory than it has now, and dhewm3 can "
+			"only set that up while no other program is using the GPU. Quit any other 3D programs "
+			"and click the dhewm3 icon again.",
+			true, {{"OK", ACT_CLOSE}});
+		return false;
+	}
+	fprintf(stderr, "launcher: reloading V3DRender with a %d MB area\n", FullGameAreaMB);
+	bool ok = Oscli_Ok("RMKill RISC3D") && Oscli_Ok("RMKill V3DRender");
+	Oscli("Set V3DRender$Size " + std::to_string(FullGameAreaMB));
+	ok = Oscli_Ok("RMLoad <RISC3D$Dir>.RISC3D") && ok;
+	if (!ok || !V3DRender_Loaded()) {
+		Tell("dhewm3 couldn't give the GPU the memory the full game needs. Restart the computer "
+			"and try again.", true);
+		return false;
+	}
+	return true;
+}
+
 void Icon_Clicked(void)
 {
 	if (JobStage == LICENCE_WAIT) {
@@ -1286,7 +1489,9 @@ void Icon_Clicked(void)
 		return;	// its window is open
 	}
 	if (Has_Game_Data()) {
-		Start_Game();
+		if (Prepare_GPU_For_Full_Game()) {
+			Start_Game();
+		}
 		return;
 	}
 	Show_Message("dhewm3 needs Doom 3's game data. Download the free Doom 3 demo?\n"
@@ -1405,6 +1610,12 @@ void Poll_Loop(void)
 					Message_Button(block[4]);
 					break;
 				}
+				if (block[3] == InfoWindow && block[4] == InfoLinkIcon && (block[2] & (4 | 1))) {
+					Open_Home_Page();
+					regs.r[1] = -1;	// and close the menu the Info window hangs from
+					Swi(Wimp_CreateMenu, regs);
+					break;
+				}
 				if (block[3] == -2 && block[4] == IconHandle) {
 					if (block[2] & 2) {
 						Open_Menu(block[0]);
@@ -1427,6 +1638,11 @@ void Poll_Loop(void)
 					if (Swi(Wimp_GetPointerInfo, regs) && (pointer[2] & 1)) {
 						Open_Menu(pointer[0] + 64);
 					}
+				}
+				break;
+			case 19:	// User_Message_Acknowledge: a message came back unclaimed
+				if (block[4] == Message_URL) {
+					URL_Not_Taken();
 				}
 				break;
 			case 17: case 18:	// User_Message(_Recorded)
@@ -1502,7 +1718,7 @@ int main(int argc, char ** argv)
 		}
 		GameArgs += std::string(argv[i]) + " ";
 	}
-	int messages[] = {3, 0x400C2, 0x400C3, 0};
+	int messages[] = {3, 0x400C2, 0x400C3, Message_URL, 0};
 	_kernel_swi_regs regs;
 	regs.r[0] = 380;
 	regs.r[1] = 0x4B534154;

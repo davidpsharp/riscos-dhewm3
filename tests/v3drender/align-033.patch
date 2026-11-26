@@ -1,0 +1,38 @@
+diff --git a/core/v3d_bo.c b/core/v3d_bo.c
+index fb108f8..0e74873 100644
+--- a/core/v3d_bo.c
++++ b/core/v3d_bo.c
+@@ -133,10 +133,23 @@ range_free (struct v3d_dev *v3d, uint32_t p, uint32_t n)
+ /* Aligned BOs are placed from the top of the area down, the rest first
+    fit from the bottom, so the small ones don't break up the aligned
+    space (and a *V3DDump's small BOs still replay at their addresses). */
++/* A BO is aligned (for the MMU's 64 KB and 1 MB entries) only when its
++   size is a whole number of the alignment. Mesa asks for sizes such as
++   1 MB + 4 KB (257 pages): placed on a 256-page boundary, each left a
++   255-page gap that only smaller BOs could use, and a 17-page BO left a
++   15-page gap. With thousands of BOs (Doom 3's full game, ~4,900) the
++   free space ended as 15-page holes: buffers of 16 pages or more were
++   refused with a quarter of the area free. */
++static uint32_t
++bo_align (uint32_t n)
++{
++  return n >= 256 && !(n & 255) ? 256 : n >= 16 && !(n & 15) ? 16 : 1;
++}
++
+ static int
+ find_pages_aligned (struct v3d_dev *v3d, uint32_t n, uint32_t *first, int avoid)
+ {
+-  uint32_t align = n >= 256 ? 256 : n >= 16 ? 16 : 1;
++  uint32_t align = bo_align (n);
+   if (align > 1 && n < v3d->area_pages)
+     for (uint32_t p = (v3d->area_pages - n) & ~(align - 1); p >= align; p -= align)
+       if (range_ok (v3d, p, n, avoid))
+@@ -451,7 +464,7 @@ v3d_bo_create_cached (struct v3d_dev *v3d, uint32_t bytes, int cached, int *bo_o
+       return -V3D_ENOMEM;
+     }
+   uint64_t t0 = plat_time_ns ();
+-  uint32_t at = v3d->place_at, align = n >= 256 ? 256 : n >= 16 ? 16 : 1;
++  uint32_t at = v3d->place_at, align = bo_align (n);
+   v3d->place_at = 0;
+   cached = cached != 0;
+   if (at && at + n <= v3d->area_pages && range_free (v3d, at, n))
