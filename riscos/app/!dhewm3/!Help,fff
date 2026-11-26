@@ -49,7 +49,7 @@ pk4 files. Leave out the other folders (d3xp, pb, Docs and so on). A click on
 the icon then plays the full game; without the base folder it plays the free
 demo. Keep the .pk4 file type when you copy the files across.
 
-Known problem, version 0.2.0: on a Raspberry Pi 4 the full game loads (it takes
+Known problem, version 0.2.1: on a Raspberry Pi 4 the full game loads (it takes
 about four minutes, most of it the textures) and then stops with a crash
 (SIGSEGV) before the first frame. The crash is in the GPU driver's buffer code,
 not in the game's own data, and is being looked into. The demo plays.

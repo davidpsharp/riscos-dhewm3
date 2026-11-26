@@ -1,4 +1,6 @@
 | RISC OS port, copyright David Sharp 2026. GPL-3.0 (see dhewm3/COPYING.txt).
 | !Boot for dhewm3
-IfThere <dhewm3$Dir> Then Else Set dhewm3$Dir <Obey$Dir>
+| IfThere <dhewm3$Dir> fails ("Parameter expansion contains unrecognised characters")
+| when the variable is unset, so test for the empty string instead.
+If "<dhewm3$Dir>"="" Then Set dhewm3$Dir <Obey$Dir>
 IconSprites <Obey$Dir>.!Sprites

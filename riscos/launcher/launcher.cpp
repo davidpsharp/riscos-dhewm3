@@ -48,7 +48,7 @@
 int __riscosify_control = __RISCOSIFY_NO_SUFFIX;
 
 #ifndef LAUNCHER_VERSION
-#define LAUNCHER_VERSION "0.2.0"
+#define LAUNCHER_VERSION "0.2.1"
 #endif
 
 namespace {
