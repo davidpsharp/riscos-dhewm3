@@ -70,6 +70,11 @@ full game without any of this.
    [`tests/v3drender/align-033.patch`](../tests/v3drender/align-033.patch). It aligns a buffer only
    when its size is a whole number of the alignment, so 2^n + 1 page buffers pack together. With
    it, Doom 3's full game in full screen had no refusals in a 1 GB area.
+   **To see it without the game:** [`tests/v3drender/BOFrag,ffb`](../tests/v3drender/BOFrag,ffb), a
+   BASIC program that makes buffers through `V3DRender_Ioctl` until one is refused (4 seconds).
+   In a 256 MB area, stock 0.33 and 0.37 refuse 1 MB + 4 KB buffers with the area 51% full (63%
+   with a mix of sizes); with the patch, 100%. Results in
+   [`tests/v3drender/README.md`](../tests/v3drender/README.md).
 2. **256 MB is too small for big games, and only a restart changes it.** Could V3DRender grow the
    area on demand, or could !RISC3DSetup offer the size (or the default follow the RAM)?
 3. A refused buffer still crashes the program instead of giving GL_OUT_OF_MEMORY (summary item 6).

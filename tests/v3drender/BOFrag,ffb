@@ -1,0 +1,94 @@
+REM >BOFrag: V3DRender's buffer area, filled the way Mesa fills it
+REM RISC OS port of dhewm3, copyright David Sharp 2026; GPL-2.0-or-later
+REM
+REM No GL, Mesa or game data: it opens V3DRender as a DRM file and
+REM makes buffers (CREATE_BO) of the sizes Mesa asks for, until one is
+REM refused, then says how much of the area was in use.
+REM Test 1: 1 MB + 4 KB buffers (257 pages), Mesa's commonest big size.
+REM Test 2: a Doom 3 like mix: rounds of one 257-page buffer, four
+REM         17-page (68 KB) ones and eight 1-page ones; then which sizes
+REM         still fit (5 MB + 4 KB is a full-screen 1280x1024 frame).
+REM It needs as much free memory as the area (V3DRender$Size, 256 MB by
+REM default), and nothing else using the GPU. Everything is freed at
+REM the end. Results: *V3DRender's "Refused" count goes up, as expected.
+ON ERROR PROCclose:REPORT:PRINT " (line ";ERL;")":END
+cbo%=&C0106442:REM DRM_IOCTL_V3D_CREATE_BO
+gclose%=&40086409:REM DRM_IOCTL_GEM_CLOSE
+DIM c% 15,g% 7,h%(60000)
+nh%=0:f%=0
+SYS "V3DRender_Info" TO ver%,,,,area%,used%,files%
+PRINT "V3DRender ";ver%DIV100;".";RIGHT$("0"+STR$(ver%MOD100),2);": buffer area ";area%>>20;" MB, ";used%>>20;" MB in use, ";files%;" programs using the GPU"
+IF files%>0 THEN PRINT "Quit the other programs using the GPU first.":END
+SYS "OS_ReadDynamicArea",6 TO ,free%
+IF free%<area%+(32<<20) THEN PRINT "Needs ";(area%>>20)+32;" MB free; there are ";free%>>20;" MB.":END
+SYS "V3DRender_Open",0 TO f%
+PRINT
+PRINT "Test 1: 1 MB + 4 KB buffers until one is refused"
+n%=0
+REPEAT
+  ok%=FNcreate(257)
+  IF ok% n%+=1
+UNTIL NOT ok%
+PROCreport(n%)
+PROCfreeall
+PRINT
+PRINT "Test 2: rounds of 1 MB + 4 KB, 4 x 68 KB and 8 x 4 KB until one is refused"
+r%=0:ok%=TRUE
+REPEAT
+  ok%=FNcreate(257)
+  FOR i%=1 TO 4:IF ok% ok%=FNcreate(17)
+  NEXT
+  FOR i%=1 TO 8:IF ok% ok%=FNcreate(1)
+  NEXT
+  IF ok% r%+=1
+UNTIL NOT ok%
+PROCreport(r%)
+PRINT "Which still fit:";
+RESTORE
+FOR i%=1 TO 4
+  READ p%
+  IF FNcreate(p%) THEN PRINT " ";FNsize(p%);" yes";:PROCfreelast ELSE PRINT " ";FNsize(p%);" NO";
+  IF i%<4 PRINT ",";
+NEXT
+PRINT
+DATA 1281,1024,257,17
+PROCfreeall
+PROCclose
+PRINT
+PRINT "Stock V3DRender aligns each buffer of 16 pages or more to 16 pages, and"
+PRINT "256 or more to 256, so a 257-page buffer takes 512 pages of the area."
+PRINT "With align-033.patch (align only whole multiples) both tests fill it."
+END
+
+DEF FNcreate(p%)
+LOCAL r%
+c%!0=p%*4096:c%!4=0:c%!8=0:c%!12=0
+SYS "V3DRender_Ioctl",f%,cbo%,c% TO r%
+IF r%<>0 THEN =FALSE
+nh%+=1:h%(nh%)=c%!8
+=TRUE
+
+DEF PROCfreelast
+g%!0=h%(nh%):g%!4=0
+SYS "V3DRender_Ioctl",f%,gclose%,g%
+nh%-=1
+ENDPROC
+
+DEF PROCfreeall
+WHILE nh%>0:PROCfreelast:ENDWHILE
+ENDPROC
+
+DEF PROCclose
+IF f%>0 THEN PROCfreeall:SYS "V3DRender_Close",f%:f%=0
+ENDPROC
+
+DEF PROCreport(n%)
+LOCAL used%
+SYS "V3DRender_Info" TO ,,,,,used%
+PRINT "  ";n%;" made (";nh%;" buffers) before the refusal: ";used%>>20;" MB of the ";area%>>20;" MB area in use (";INT(used%/area%*100+.5);"%)"
+ENDPROC
+
+DEF FNsize(p%)
+IF p%<256 THEN =STR$(p%*4)+" KB"
+IF p% AND 255 THEN =STR$(p%>>8)+" MB + "+STR$((p% AND 255)*4)+" KB"
+=STR$(p%>>8)+" MB"
