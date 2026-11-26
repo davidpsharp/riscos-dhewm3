@@ -7,12 +7,13 @@ needs RISC OS 5 on ARMv7 or later.
 
 It runs on:
 - RoMac (RISC OS on a Mac), drawing on the Mac's GPU;
-- RISC OS on Linux, on a machine whose GPU Linux drives (not yet tested);
-- a Raspberry Pi 4 running RISC OS: not yet (RISC3D's Pi 4 driver can't
-  yet give it the memory it needs on RISC OS 5.30).
+- a Raspberry Pi 4 running RISC OS 5.30, drawing on its GPU through RISC3D 0.22
+  (the demo, at about 12 frames a second in the hangar at 800 x 600);
+- RISC OS on Linux, on a machine whose GPU Linux drives (not yet tested).
 
-You need !RISC3D (RISC3D 0.05 or later), !MesaLibs and !SharedLibs in
-!Boot.Resources.
+You need !RISC3D (RISC3D 0.05 or later) and !MesaLibs in !Boot.Resources, and
+SharedUnixLibrary (1.16 or later) and ARMEABISupport (1.03 or later). PackMan
+installs the last two for you.
 
 
 Playing
@@ -42,10 +43,16 @@ package: it comes from id's archive when you ask for it.
 The full game
 -------------
 
-Put the full game's base folder (from the Steam or GOG version of Doom 3:
-pak000/pk4 to pak008/pk4) in !dhewm3, as !dhewm3.base. A click on the icon
-then plays the full game.
+To play the full game, copy the base folder of your own copy of Doom 3 (Steam
+or GOG) into !dhewm3 as !dhewm3.base. It holds pak000 to pak008, which are
+pk4 files. Leave out the other folders (d3xp, pb, Docs and so on). A click on
+the icon then plays the full game; without the base folder it plays the free
+demo. Keep the .pk4 file type when you copy the files across.
 
+Known problem, version 0.2.0: on a Raspberry Pi 4 the full game loads (it takes
+about four minutes, most of it the textures) and then stops with a crash
+(SIGSEGV) before the first frame. The crash is in the GPU driver's buffer code,
+not in the game's own data, and is being looked into. The demo plays.
 
 Files
 -----
@@ -60,3 +67,4 @@ Credits
 
 Doom 3 (c) id Software. dhewm3: Daniel Gibson and contributors, GPL 3
 (see the source). RISC3D, riscos-mesa: Andrew Youll. Port: David Sharp.
+Licence: GPL 3, in the COPYING file. Source: https://github.com/davidpsharp/riscos-dhewm3

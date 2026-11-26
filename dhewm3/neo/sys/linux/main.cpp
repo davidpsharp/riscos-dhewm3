@@ -450,10 +450,15 @@ static void *riscos_prof_thread( void *arg ) {
 		riscos_prof_samples[i][0] = regs[15];
 		riscos_prof_samples[i][1] = regs[14];
 	}
-	FILE *f = fopen( "/<dhewm3$Dir>/prof", "wb" );
-	if ( f ) {
-		fwrite( riscos_prof_samples, sizeof riscos_prof_samples, 1, f );
-		fclose( f );
+	// Written with OS_File, as fopen wouldn't expand dhewm3$Dir. The file is <dhewm3$Dir>.prof,
+	// a data file (type &FFF) of the sample pairs.
+	const char *dir = getenv( "dhewm3$Dir" );
+	if ( dir ) {
+		char path[512];
+		snprintf( path, sizeof path, "%s.prof", dir );
+		unsigned start = (unsigned)riscos_prof_samples;
+		unsigned end = start + sizeof riscos_prof_samples;
+		_swix( OS_File, _INR(0,5), 0, path, 0xFFFFFF00u, 0, start, end );
 	}
 	fprintf( stderr, "profile: %d samples written\n", RISCOS_PROF_N );
 	return NULL;

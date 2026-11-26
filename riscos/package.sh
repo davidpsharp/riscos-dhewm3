@@ -19,4 +19,6 @@ cp build/launcher/launcher,ff8 "$A/!RunImage,ff8"
 cp "$RISCOS_DEVKIT/riscos/PThrTicker,ffa" "$A/"
 # riscos-mesa's DAClamp (lifts RISC OS 5's 128 MB cap on dynamic areas; Game runs it)
 cp "$RISCOS_DEVKIT/riscos/!MesaLibs/DAClamp,ffc" "$A/"
+# the GPL-3 licence text, which the binary is distributed under
+cp dhewm3/COPYING.txt "$A/COPYING,fff"
 ls -l "$A"
