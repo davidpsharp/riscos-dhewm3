@@ -62,7 +62,7 @@ full game without any of this.
 | **0.33 + alignment fix, 1 GB** | full | full screen 1280x1024 | **0 refused**, 812 MB, plays at about 6.4 fps |
 | **0.37, 1 GB** | **smaller** | window, 5 levels in a row | **0 refused**, peaks about 490 MB |
 | **0.37, 1 GB** | **smaller** | full screen 1280x1024, 2 levels | **0 refused**, peak 485 MB, 1 GPU reset while loading |
-| **0.37, 256 MB at boot; 0.2.2 launcher** | smaller | icon, New Game, Mars City | launcher set up 1 GB; **0 refused**, 446 MB, about 10.5 fps |
+| **0.37, 256 MB at boot; 0.2.2 launcher** | smaller | icon, New Game, Mars City | launcher set up 1 GB; **0 refused**, 446 MB, about 10.5 fps at the start of Mars City (one reading; 11-15 fps across the hangar in earlier tests) |
 
 ## For Andy (RISC3D / V3DRender)
 

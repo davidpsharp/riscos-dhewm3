@@ -14,8 +14,8 @@ Contact (questions, bug reports): https://davidsharp.com/contact/ or this reposi
 **Status (version 0.2.2, 26 November 2026):** the free demo and the full game both play.
 - **RoMac:** plays in a window, about 30 fps.
 - **Raspberry Pi 4 (RISC OS 5.30, RISC3D 0.22 with V3DRender 0.37):** the demo plays at about
-  12 fps in an 800x600 window. The full game plays too, at about 10 fps in
-  Mars City: on a Pi the launcher gives the GPU a 1 GB buffer area and uses smaller textures,
+  12 fps in an 800x600 window. The full game plays too, at about 10 to 15 fps
+  in Mars City (more in smaller rooms): on a Pi the launcher gives the GPU a 1 GB buffer area and uses smaller textures,
   so it needs about 700 MB of free memory (a 2 GB or bigger Pi 4; tested on 4 GB). See
   [docs/full-game-gpu-buffers.md](docs/full-game-gpu-buffers.md).
 - **RISC OS on Linux:** not yet tried.
