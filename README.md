@@ -11,12 +11,14 @@ RISC3D.
 Home page: https://davidsharp.com/riscos/doom3/
 Contact (questions, bug reports): https://davidsharp.com/contact/ or this repository's issues.
 
-**Status (version 0.2.2, 26 November 2026):** the free demo and the full game both play.
+**Status (version 0.2.3, 27 November 2026):** the free demo and the full game both play.
 - **Raspberry Pi 4 (RISC OS 5.30, RISC3D 0.22 with V3DRender 0.37):** the demo plays at about
   12 fps in an 800x600 window. The full game plays too, at about 10 to 15 fps
   in Mars City (more in smaller rooms): on a Pi the launcher gives the GPU a 1 GB buffer area and uses smaller textures,
   so it needs about 700 MB of free memory (a 2 GB or bigger Pi 4; tested on 4 GB). See
-  [docs/full-game-gpu-buffers.md](docs/full-game-gpu-buffers.md).
+  [docs/full-game-gpu-buffers.md](docs/full-game-gpu-buffers.md). Shadows are off at first on
+  a Pi 4 (about 16.5 instead of 25 fps with them); a Shadows tick in the icon bar menus turns
+  them on, even mid-game.
 - **RISC OS on Linux** (RISC3D's Linux3D driver): not yet tried.
 
 **Game data:** none is included. The icon bar launcher downloads id Software's free Doom 3 demo on

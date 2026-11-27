@@ -1,4 +1,4 @@
-dhewm3 for RISC OS, version 0.2.2
+dhewm3 for RISC OS, version 0.2.3
 =================================
 
 dhewm3 is the Doom 3 engine (id Software's GPL source, kept up by the dhewm3
@@ -46,8 +46,23 @@ If you already have the installer, drag it onto the icon instead.
 id's licence doesn't allow the demo to be passed on, so it isn't in this
 package: it comes from id's archive when you ask for it.
 
-To see the frame rate: open the console (Shift+Esc), type  com_showFPS 1
-and press Return.
+The console: Shift+Esc opens it, and Shift+Esc again closes it. Type a
+command there and press Return.
+
+The mouse pointer: while you play, the game keeps the pointer in its window.
+To use other windows, press Esc (the game pauses in its menu and lets the
+pointer go; the game draws its own pointer inside the window) or Shift+Esc
+(the console, with the desktop's pointer). Click in the game window to carry
+on.
+
+To see the frame rate: open the console, type  com_showFPS 1  and press
+Return.
+
+Saved games are in !dhewm3.home.dhewm3.base.savegames: each save is a .save
+file, with a .tga picture (the screenshot the Load Game menu shows) and a
+.txt description. Screenshots you take with F11 go into
+!dhewm3.home.dhewm3.base.screenshots, as .tga files (but see Known
+problems).
 
 Shadows: on a Raspberry Pi 4 they're off at first, because they cost a lot
 there (with them the game runs at about two thirds of the speed: 16.5
@@ -98,6 +113,8 @@ Known problems
   the game carries on.
 - A 64K colour desktop shows the game's window garbled: use a 16 million
   colour mode.
+- On a Pi 4, screenshots (F11) and the pictures of saved games come out
+  black. Saving takes 10 to 20 seconds.
 
 
 Files
